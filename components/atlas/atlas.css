@@ -18,4 +18,200 @@
 @media(max-width:720px){.atlas-app{height:auto;min-height:100dvh;overflow:visible}.app-header{height:64px;padding:0 16px;gap:14px;position:sticky;top:0;z-index:45}.brand{font-size:28px;gap:7px}.brand-symbol{width:31px;height:31px}.brand-symbol svg{width:23px}.top-nav{gap:16px}.top-nav button{font-size:12px}.top-nav button.active{display:none}.top-nav button:last-child{font-size:0;gap:0}.top-nav button:last-child>svg{width:17px;height:17px}.header-end{display:none}.workspace{display:flex;flex-direction:column;flex:none}.explorer-main{min-height:620px}.viewer-bar{height:46px;padding:0 17px}.breadcrumb{font-size:12px;gap:8px}.viewport{min-height:480px;flex:none;height:63dvh;max-height:680px}.scene-heading{top:22px;left:20px}.scene-heading h1{font-size:26px;max-width:90%;line-height:1.2;margin-top:9px}.scene-heading>p:last-child{font-size:13px}.scene-heading .eyebrow{font-size:9px}.view-switch{top:120px;left:20px}.view-switch button{font-size:12px;padding:6px 9px}.camera-tools{right:14px;transform:translateY(-7%)}.camera-preset{bottom:40px;left:20px}.orientation{right:20px;bottom:44px}.explore-hint{left:20px;bottom:14px;gap:6px}.model-label{font-size:11px;padding:5px 6px}.lesson-dock{min-height:125px;padding:19px 20px}.dock-copy h2{font-size:14px;line-height:1.6}.dock-copy .eyebrow{font-size:10px;letter-spacing:1px}.lesson-dock .primary-button{font-size:12px!important;gap:7px!important;padding:0 10px!important}.inspector{border-left:none;border-top:1px solid #3a4e4a;min-height:0}.inspector-top{padding:0 23px;height:47px}.inspector-scroll{padding:25px 23px;overflow:visible}.structure-title h2{font-size:30px}.structure-title>p{font-size:14px}.main-description{font-size:16px;line-height:1.9;max-width:640px}.detail-section h3{font-size:15px}.detail-section p,.clinical-note p{font-size:16px}.tissue-category{font-size:13px}.inspector-tabs{font-size:14px;gap:26px}.fact-chip{font-size:13px;max-width:450px}.structure-controls{max-width:600px}.range-control>div:first-child{font-size:14px}.range-control [data-slot=slider]{height:25px}.range-control [data-slot=slider-thumb]{height:15px;width:15px}.isolate-button{font-size:14px!important;height:42px!important}.knowledge-check summary,.knowledge-check>p,.knowledge-check>button{font-size:14px}.source-link{font-size:13px}.inspector-bottom{font-size:12px;padding:15px 23px}.app-footer{height:40px;padding:0 20px;font-size:8px}.app-footer button{font-size:11px}.sidebar{top:64px;bottom:0;width:285px}.sidebar-scrim{inset:64px 0 0}.sidebar-title{padding-top:19px}.structure-list{padding:0 12px 20px}.structure-group h3{font-size:12px}.structure-row{min-height:38px}.structure-select{font-size:14px}.visibility-toggle{width:38px;height:37px}.module-item{padding:14px 10px}.module-item small{font-size:12px}.module-item strong{font-size:16px}.module-icon{width:31px}.sidebar-footer strong{font-size:12px}.sidebar-footer span{font-size:11px}.tour-card{bottom:85px;left:20px;width:245px}.tour-card p{font-size:13px}.tour-card button{font-size:12px}.flow-legend{left:20px;top:172px;max-width:88%;font-size:10px}.lesson-dock.aqueous{padding:18px 17px 22px}.playback-row .eyebrow{font-size:10px}.playback-row p{font-size:11px}.flow-timeline{margin-top:22px}.flow-timeline button>strong{font-size:10px}.flow-timeline button>span{height:27px;width:27px;font-size:11px}.flow-timeline:before{top:13px}.pathway-options strong{font-size:14px}.pathway-options small{font-size:12px}.pathway-options button{padding:14px;gap:12px}.physiology-lab{padding:18px}.physiology-lab summary{font-size:14px}.physiology-lab .range-control>div:first-child{font-size:13px}.cataract-types button{font-size:14px;padding:9px 11px}.findings li{font-size:16px}.vision-comparison{max-width:440px}.vision-comparison>div>span{font-size:12px}.vision-comparison strong{font-size:32px}.vision-comparison>p{font-size:11px}.risk-details summary,.risk-details p{font-size:14px}.cataract-dock-head h2{font-size:16px}.cataract-dock-head h2 span{display:block;margin-top:3px}.severity-control [data-slot=slider]{height:24px}.atlas-dialog{padding:23px!important;max-height:90dvh}.atlas-dialog [data-slot=dialog-title]{font-size:23px;padding-right:10px}.atlas-dialog [data-slot=dialog-description]{font-size:14px}.model-disclosure{padding:17px}.reference{gap:10px}.reference strong{font-size:14px}.focus-mode .inspector{display:none}.focus-mode .viewport{height:calc(100dvh - 270px);min-height:440px}.focus-mode .scene-heading h1{font-size:27px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 .structure-controls .isolate-button+.isolate-button{margin-top:8px}
+.theme-toggle{display:grid;place-items:center;width:32px;height:32px;border-radius:6px;color:#9aacba;border:1px solid transparent}
+.theme-toggle:hover{color:#e5eee9;background:#29362f}
+html.ocula-light .theme-toggle{color:#4c5f6d}
+html.ocula-light .theme-toggle:hover{color:#12372a;background:#dde8e2}
+/* ============ TEMA TERANG ============ */
+html.ocula-light{--background:#ffffff;--foreground:#1d2833;--card:#ffffff;--card-foreground:#1d2833;--popover:#ffffff;--popover-foreground:#1d2833;--primary:#14532d;--primary-foreground:#f0fdf4;--secondary:#e8eef1;--secondary-foreground:#1d2833;--muted:#e8eef1;--muted-foreground:#5b6b78;--accent:#e3f0e9;--accent-foreground:#14532d;--destructive:#b3261e;--border:#d5dde2;--input:#d5dde2;--ring:#1f7a5c;--ink:#1d2833;--dim:#5b6b78;--mint:#14735a;--line:rgba(25,45,55,.14);color-scheme:light}
+html.ocula-light body{background:#e9eff2;color:#1d2833}
+html.ocula-light .atlas-app ::selection{background:#14735a40}
+html.ocula-light .app-header{background:#ffffff;border-bottom:1px solid var(--line)}
+html.ocula-light .brand{color:#16232e}
+html.ocula-light .brand-symbol{background:#dcefe4;color:#14735a}
+html.ocula-light .brand-period{color:#14735a}
+html.ocula-light .brand-caption{color:#5b6b78}
+html.ocula-light .top-nav button{color:#5b6b78}
+html.ocula-light .top-nav button.active{color:#12372a}
+html.ocula-light .top-nav button.active:after{background:#14735a}
+html.ocula-light .top-nav button:hover{color:#000}
+html.ocula-light .language{color:#33414d}
+html.ocula-light .language span{color:#75828d}
+html.ocula-light .edition{border:1px solid #bcd8c6;color:#14735a}
+html.ocula-light .sidebar{background:#f7fafb;border-right:1px solid var(--line)}
+html.ocula-light .eyebrow{color:#5b6b78}
+html.ocula-light .count-badge{color:#4c5f6d;background:#e3eaee}
+html.ocula-light .module-list{border-bottom:1px solid var(--line)}
+html.ocula-light .module-item:hover{background:#e9f0f3}
+html.ocula-light .module-item.active{background:#e2f0e7;border-color:#9cc3ab}
+html.ocula-light .module-item strong{color:#1d2833}
+html.ocula-light .module-item.active strong{color:#12372a}
+html.ocula-light .module-item small{color:#5b6b78}
+html.ocula-light .module-icon{color:#75828d}
+html.ocula-light .module-item.active .module-icon{color:#14735a}
+html.ocula-light .module-item>svg{color:#75828d}
+html.ocula-light .structure-heading>span:last-child{color:#5b6b78}
+html.ocula-light .structure-group h3{color:#5b6b78}
+html.ocula-light .structure-row.selected{background:#e6efe8;border-color:#9cc3ab}
+html.ocula-light .structure-row:hover{background:#e9f0f3}
+html.ocula-light .structure-select{color:#24313c}
+html.ocula-light .sidebar-footer{color:#5b6b78}
+html.ocula-light .sidebar-footer strong{color:#24313c}
+html.ocula-light .explorer-main{background:#eef3f5}
+html.ocula-light .viewer-bar{border-bottom:1px solid var(--line)}
+html.ocula-light .breadcrumb{color:#5b6b78}
+html.ocula-light .breadcrumb svg{color:#8a99a5}
+html.ocula-light .breadcrumb strong{color:#24313c}
+html.ocula-light .live-3d{color:#3f6b58;border:1px solid #9cc3ab}
+html.ocula-light .icon-button{color:#4c5f6d!important}
+html.ocula-light .icon-button:hover{color:#12372a!important;background:#dde8e2!important}
+html.ocula-light .icon-button.is-active{color:#12372a!important;background:#cfe6d6!important}
+html.ocula-light .viewport{background:radial-gradient(ellipse at 50% 54%,#ffffff90 0%,#e4ecef66 33%,#eef3f500 68%),#eef3f5}
+html.ocula-light .viewport:after{background-image:linear-gradient(#14425e10 1px,transparent 1px),linear-gradient(90deg,#14425e10 1px,transparent 1px)}
+html.ocula-light .scene-heading .eyebrow{color:#5b6b78}
+html.ocula-light .scene-heading .eyebrow span{color:#3f6b58}
+html.ocula-light .scene-heading h1{color:#16232e}
+html.ocula-light .scene-heading>p:last-child{color:#4c5f6d}
+html.ocula-light .view-switch button{color:#4c5f6d;background:#ffffffd9;border:1px solid var(--line)}
+html.ocula-light .view-switch button.active{color:#12372a;background:#d8ecdf;border-color:#9cc3ab}
+html.ocula-light .model-label{border:1px solid #b9c8d295;background:#fffffff2;color:#2c3d49;box-shadow:0 3px 14px #1a3a4a22}
+html.ocula-light .model-label:before{background:#5b7b8b77}
+html.ocula-light .model-label.selected{border-color:#8a6d2f;color:#5c4a12;background:#fdf6e0f2}
+html.ocula-light .camera-tools{border:1px solid var(--line);background:#ffffffdc}
+html.ocula-light .camera-tools>span{background:var(--line)}
+html.ocula-light .orientation{color:#4c5f6d}
+html.ocula-light .orientation>svg{color:#5f7a68}
+html.ocula-light .camera-preset button{color:#4c5f6d}
+html.ocula-light .camera-preset button.active{color:#12372a;border-color:#14735a}
+html.ocula-light .canvas-caption span:first-child{color:#5b6b78}
+html.ocula-light .canvas-caption span:last-child{color:#75828d}
+html.ocula-light .explore-hint{color:#4c5f6d}
+html.ocula-light .explore-hint>svg{color:#3f6b58}
+html.ocula-light .hint-dot{color:#8a99a5}
+html.ocula-light .isolate-banner{color:#3d4a12;background:#fdf6e0f2;border:1px solid #c9b36a}
+html.ocula-light .exploded-note{color:#4c5f6d}
+html.ocula-light .tour-card{border:1px solid #9cc3ab;background:#fffffff5;box-shadow:0 8px 30px #1a3a4a22}
+html.ocula-light .tour-card .eyebrow{color:#3f6b58}
+html.ocula-light .tour-card h3{color:#16232e}
+html.ocula-light .tour-card p{color:#43565f}
+html.ocula-light .tour-card>div:last-child{border-top:1px solid #9cc3ab66}
+html.ocula-light .tour-card button{color:#14735a}
+html.ocula-light .scene-loading{color:#3f6b58}
+html.ocula-light .scene-error{background:#fff;color:#5c1a1a;border:1px solid #d99}
+html.ocula-light .loader{border:2px solid #14735a44;border-top-color:#14735a}
+html.ocula-light .flow-legend{color:#43565f}
+html.ocula-light .flow-legend button{color:#14532d;background:#e2f0e7}
+html.ocula-light .lesson-dock{background:#f7fafb;border-top:1px solid var(--line)}
+html.ocula-light .dock-icon{border:1px solid #9cc3ab;background:#e2f0e7;color:#3f6b58}
+html.ocula-light .dock-copy .eyebrow{color:#5b6b78}
+html.ocula-light .dock-copy h2{color:#16232e}
+html.ocula-light .dock-copy p{color:#4c5f6d}
+html.ocula-light .primary-button{background:#14532d!important;color:#f0fdf4!important;border:1px solid #14532d!important}
+html.ocula-light .primary-button:hover{background:#1f7a5c!important}
+html.ocula-light .inspector{background:#f7fafb;border-left:1px solid var(--line)}
+html.ocula-light .inspector-top{border-bottom:1px solid var(--line)}
+html.ocula-light .inspector-top>svg{color:#75828d}
+html.ocula-light .tissue-category{color:#43565f}
+html.ocula-light .structure-title h2{color:#16232e}
+html.ocula-light .structure-title>p{color:#5b6b78}
+html.ocula-light .inspector-tabs{border-bottom:1px solid var(--line)}
+html.ocula-light .inspector-tabs button{color:#5b6b78}
+html.ocula-light .inspector-tabs button.active{color:#12372a}
+html.ocula-light .inspector-tabs button.active:after{background:#14735a}
+html.ocula-light .main-description{color:#33414d}
+html.ocula-light .fact-chip{background:#e2f0e780;border:1px solid #9cc3ab;color:#2c5a41}
+html.ocula-light .detail-section h3{color:#16232e}
+html.ocula-light .detail-section p{color:#43565f}
+html.ocula-light .structure-controls{border-top:1px solid var(--line)}
+html.ocula-light .isolate-button{border:1px solid #9cc3ab!important;background:#e2f0e7!important;color:#12372a!important}
+html.ocula-light .isolate-button.active{background:#c2ddcb!important}
+html.ocula-light .range-control>div:first-child{color:#33414d}
+html.ocula-light .range-control output{color:#14735a}
+html.ocula-light .app-footer{background:#ffffff;border-top:1px solid var(--line);color:#5b6b78}
+html.ocula-light .app-footer>span:first-child{color:#3f6b58}
+html.ocula-light .app-footer button{color:#14735a}
+html.ocula-light .clinical-note{border-left:2px solid #14735a;background:#e2f0e766}
+html.ocula-light .clinical-note>svg{color:#14735a}
+html.ocula-light .clinical-note h3{color:#12372a}
+html.ocula-light .clinical-note p{color:#33414d}
+html.ocula-light .clinical-note .eyebrow{color:#3f6b58}
+html.ocula-light .clinical-note button{color:#14735a}
+html.ocula-light .gold-note{border-color:#b5a168;background:#faf3dd66}
+html.ocula-light .gold-note>p{color:#5c4a12}
+html.ocula-light .gold-note>svg{color:#8a6d2f}
+html.ocula-light .knowledge-check{border-top:1px solid var(--line)}
+html.ocula-light .knowledge-check summary{color:#2c5a41}
+html.ocula-light .knowledge-check>p{color:#33414d}
+html.ocula-light .knowledge-check>button{border:1px solid #c3cfd5;color:#2c5a41;background:#fff}
+html.ocula-light .knowledge-check>button>span{color:#43565f}
+html.ocula-light .knowledge-check>button.correct{background:#dcefe4;border-color:#4c8a68}
+html.ocula-light .knowledge-check>button.incorrect{background:#f7ddd8;border-color:#b26a5e}
+html.ocula-light .knowledge-check .quiz-feedback{border:1px solid #9cc3ab;background:#e2f0e7;color:#12372a}
+html.ocula-light .play-button{background:#14532d!important;color:#f0fdf4!important}
+html.ocula-light .playback-row .eyebrow{color:#3f6b58}
+html.ocula-light .playback-row p{color:#4c5f6d}
+html.ocula-light .speed-control{background:#fff;border:1px solid #c3cfd5;color:#24313c}
+html.ocula-light .schematic-badge{color:#5b6b78;border-left:1px solid var(--line)}
+html.ocula-light .flow-timeline:before{background:#c3cfd5}
+html.ocula-light .flow-timeline button>span{border:1px solid #9db3bd;background:#fff;color:#43565f}
+html.ocula-light .flow-timeline button>strong{color:#4c5f6d}
+html.ocula-light .flow-timeline button.active>span{border-color:#14735a;background:#14735a;color:#fff}
+html.ocula-light .flow-timeline button.active>strong{color:#12372a}
+html.ocula-light .flow-timeline button.passed>span{color:#14735a;border-color:#6aa985}
+html.ocula-light .pathway-options button{border:1px solid #c3cfd5;background:#fff}
+html.ocula-light .pathway-options button strong{color:#16232e}
+html.ocula-light .pathway-options button small{color:#5b6b78}
+html.ocula-light .pathway-options button.active{border-color:#14735a;background:#e2f0e7}
+html.ocula-light .small-note{color:#5b6b78}
+html.ocula-light .physiology-lab summary{color:#24313c}
+html.ocula-light .iop-output strong{color:#12372a}
+html.ocula-light .iop-output span{color:#5b6b78}
+html.ocula-light .unit-note{color:#5b6b78}
+html.ocula-light .formula{color:#12372a}
+html.ocula-light .cataract-types button{color:#43565f;border:1px solid #9db3bd;background:#fff}
+html.ocula-light .cataract-types button.active{background:#f5e9c8;border-color:#8a6d2f;color:#5c4a12}
+html.ocula-light .findings li{color:#43565f}
+html.ocula-light .findings li span{background:#8a6d2f}
+html.ocula-light .vision-comparison{border:1px solid #c3cfd5;background:#fff}
+html.ocula-light .vision-comparison>div:first-child{border-right:1px solid #c3cfd5}
+html.ocula-light .vision-comparison>div>span{color:#5b6b78}
+html.ocula-light .vision-comparison strong{color:#24313c}
+html.ocula-light .vision-comparison>p{border-top:1px solid #c3cfd5;color:#5b6b78}
+html.ocula-light .vision-comparison.night{background:#101820}
+html.ocula-light .vision-comparison.night>div>span{color:#8fa3b8}
+html.ocula-light .risk-details{border-top:1px solid var(--line)}
+html.ocula-light .risk-details summary{color:#24313c}
+html.ocula-light .risk-details p{color:#43565f}
+html.ocula-light .cataract-dock-head .eyebrow{color:#8a6d2f}
+html.ocula-light .cataract-dock-head h2{color:#3d3020}
+html.ocula-light .severity-control{color:#43565f}
+html.ocula-light .dock-note{color:#5b6b78}
+html.ocula-light .source-link{color:#14735a}
+html.ocula-light .inspector-bottom{color:#5b6b78}
+html.ocula-light .atlas-dialog{background:#ffffff!important;border:1px solid #c3cfd5!important}
+html.ocula-light .atlas-dialog [data-slot=dialog-title]{color:#16232e}
+html.ocula-light .atlas-dialog [data-slot=dialog-description]{color:#4c5f6d}
+html.ocula-light .model-disclosure{background:#eef5f0;border:1px solid #9cc3ab}
+html.ocula-light .model-disclosure h3{color:#12372a}
+html.ocula-light .model-disclosure p{color:#33414d}
+html.ocula-light .references-heading{color:#12372a}
+html.ocula-light .reference{border-bottom:1px solid #dde5e9}
+html.ocula-light .reference>span{color:#3f6b58}
+html.ocula-light .reference strong{color:#12372a}
+html.ocula-light .reference small{color:#5b6b78}
+html.ocula-light .reference p{color:#43565f}
+html.ocula-light .reference>svg{color:#14735a}
+html.ocula-light .reference-context h3{color:#12372a}
+html.ocula-light .reference-context p{color:#43565f}
+html.ocula-light .reference-context a{color:#14735a}
+html.ocula-light .guide-content li{color:#43565f}
+html.ocula-light .guide-content li strong{color:#12372a}
+html.ocula-light .keyboard-guide{border:1px solid #c3cfd5}
+html.ocula-light .keyboard-guide h3{color:#12372a}
+html.ocula-light .keyboard-guide p{color:#43565f}
+html.ocula-light .preset-row button{color:#43565f;border:1px solid #9db3bd;background:#fff}
+html.ocula-light .preset-row button.active{background:#f5e9c8;border-color:#8a6d2f;color:#5c4a12}
+html.ocula-light .neraca{border:1px solid #c3cfd5;background:#fff}
+html.ocula-light .neraca span{color:#2c5a41}
+html.ocula-light .skip-link{background:#14532d;color:#fff}
 .preset-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}.preset-row button{font-size:12px;color:#b5c3b9;border:1px solid #414b3f;border-radius:4px;padding:7px 9px;line-height:1.5}.preset-row button.active{background:#494334;border-color:#8b7d51;color:#e5d5a8}.neraca{margin-top:14px;border:1px solid #34424c;border-radius:6px;background:#1b262f;padding:10px 12px;display:grid;gap:4px}.neraca span{font-size:12px;color:#a9bfae;line-height:1.6}.vision-comparison.night{background:#0b1118}.vision-comparison.night>div>span{color:#8fa3b8}.sim-eye{position:relative;overflow:hidden}.glare-source{position:absolute;left:50%;top:34%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#fffbe8 0%,#ffedb5 28%,#ffd98a55 55%,transparent 72%);box-shadow:0 0 18px 6px #ffe9a866;pointer-events:none}.veil{position:absolute;inset:0;background:#e8eef4;pointer-events:none}

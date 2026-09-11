@@ -1,7 +1,7 @@
 'use client';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {flushSync} from 'react-dom';
-import {Eye,EyeOff,Layers3,BookOpen,ArrowUpRight,ChevronRight,ChevronLeft,RotateCcw,Plus,Minus,Focus,Maximize2,Minimize2,Tag,Play,Pause,MoveUpRight,MousePointer2,Move3D,SlidersHorizontal,X,Info,Check,PanelLeft,Lightbulb,Droplets,ScanEye,ArrowRight,Box,GraduationCap} from 'lucide-react';
+import {Eye,EyeOff,Layers3,BookOpen,ArrowUpRight,ChevronRight,ChevronLeft,RotateCcw,Plus,Minus,Focus,Maximize2,Minimize2,Tag,Play,Pause,MoveUpRight,MousePointer2,Move3D,SlidersHorizontal,X,Info,Check,PanelLeft,Lightbulb,Droplets,ScanEye,ArrowRight,Box,GraduationCap,Sun,Moon} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Dialog,DialogContent,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 import {Slider} from '@/components/ui/slider';
@@ -33,6 +33,9 @@ export default function Explorer(){
   const [modal,setModal]=useState<'sources'|'guide'|null>(null),[inspectorTab,setInspectorTab]=useState<'overview'|'clinical'>('overview');
   const [mobileLayers,setMobileLayers]=useState(false),[focus,setFocus]=useState(false),[tour,setTour]=useState<number|null>(null),[question,setQuestion]=useState<number|null>(null);
   const [production,setProduction]=useState(2.5),[facility,setFacility]=useState(.30),[uveoscleral,setUveoscleral]=useState(.5);
+  const [theme,setTheme]=useState<'dark'|'light'>('dark');
+  useEffect(()=>{try{const saved=window.localStorage.getItem('ocula-theme');if(saved==='light'||saved==='dark')setTheme(saved);}catch{/* default gelap */}},[]);
+  useEffect(()=>{try{document.documentElement.classList.toggle('ocula-light',theme==='light');window.localStorage.setItem('ocula-theme',theme);}catch{/* abaikan */}},[theme]);
   const stateRef=useRef(state);stateRef.current=state;
   const update=useCallback((patch:Partial<SceneState>)=>setState(s=>({...s,...patch})),[]);
   const choose=useCallback((id:StructureId)=>setState(s=>({...s,selected:id,opacity:1,isolated:s.isolated?id:null,hidden:s.hidden.filter(x=>x!==id),detail:null,detailSub:null})),[]);
@@ -82,7 +85,7 @@ export default function Explorer(){
     <header className="app-header">
       <a href="#explorer" className="brand" aria-label="Ocula atlas mata"><span className="brand-symbol"><Eye size={26} strokeWidth={1.35}/></span><span>ocula<span className="brand-period">.</span></span><span className="brand-divider"/><span className="brand-caption">OPHTHALMOLOGY ATLAS</span></a>
       <nav className="top-nav" aria-label="Navigasi utama"><button className="active" onClick={()=>{setModal(null);setFocus(false);}}>Explorer</button><button onClick={()=>setModal('guide')}>Panduan belajar</button><button onClick={()=>setModal('sources')}>Sumber & model <ArrowUpRight size={14}/></button></nav>
-      <div className="header-end"><span className="language">ID <span>/ EN istilah</span></span><span className="edition">EDISI 01</span></div>
+      <div className="header-end"><button className="theme-toggle" onClick={()=>setTheme(t=>t==='dark'?'light':'dark')} title={theme==='dark'?'Ganti ke tema terang':'Ganti ke tema gelap'} aria-label={theme==='dark'?'Ganti ke tema terang':'Ganti ke tema gelap'}>{theme==='dark'?<Sun size={16}/>:<Moon size={16}/>}</button><span className="language">ID <span>/ EN istilah</span></span><span className="edition">EDISI 01</span></div>
     </header>
     <div className="workspace">
       {mobileLayers&&<button className="sidebar-scrim" onClick={()=>setMobileLayers(false)} aria-label="Tutup daftar struktur"/>}
