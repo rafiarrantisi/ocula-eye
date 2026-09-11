@@ -7,9 +7,11 @@ export interface Structure {
   description: string; function: string; relation: string; clinical: string;
   fact: string; sources: string[];
 }
+export type DetailView = null | 'cornea' | 'angle' | 'lens' | 'iris-ciliary' | 'retina' | 'onh';
 export interface SceneState {
   module: ModuleId; view: ViewMode; selected: StructureId; hidden: StructureId[];
   isolated: StructureId | null; labels: boolean; opacity: number; playing: boolean;
   speed: number; step: number; pathway: 'both' | 'trabecular' | 'uveoscleral';
   cataract: CataractType; severity: number; reset: number; zoom: number; angle: 'oblique' | 'front' | 'side';
+  detail: DetailView; detailSub: string | null; accommodation: number; lighting: 'day' | 'night';
 }

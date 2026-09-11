@@ -127,3 +127,472 @@ export function flowPaths():FlowPath[]{
   return paths;
 }
 
+// ---------------------------------------------------------------------------
+// Micro detail views (fase 1: kornea + sudut). Skala skematik yang diperbesar,
+// +X anterior, +Y radial/eksternal, +Z sirkumferensial. Bukan mikrometer asli.
+// ---------------------------------------------------------------------------
+
+export const microAnchors: Record<string,[number,number,number]> = {
+  epithelium:[.59,.30,.10],bowman:[.505,.34,.10],stroma:[.03,.38,.10],
+  descemet:[-.46,.30,.10],endothelium:[-.53,.26,.10],
+  schwalbe:[.80,.55,.10],'uveal-tm':[.55,.20,.10],'corneoscleral-tm':[.48,.30,.10],
+  jct:[.42,.34,.10],'schlemm-detail':[.38,.48,.10],collector:[.30,.72,.10],spur:[.10,.10,.10],
+  capsule:[.0,.62,.10],'lens-epithelium':[.42,.25,.10],cortex:[.10,-.60,.10],
+  nucleus:[-.02,.05,.30],'lens-fibers':[.05,.50,.25],'lens-suture':[.62,.0,.15],'zonule-attach':[.0,.85,.10],
+  sphincter:[.57,.20,.10],dilator:[.53,.42,.10],'ciliary-muscle':[.10,.72,.10],
+  'pars-plicata':[.20,.62,.15],'ciliary-process':[.15,.58,.20],'pars-plana':[-.20,.66,.10],
+  pe:[.05,.60,.25],npe:[.05,.56,.30],
+  ilm:[.60,0,-.45],nfl:[.51,.30,-.45],gcl:[.39,-.30,-.45],ipl:[.28,.30,-.45],
+  inl:[.15,-.30,-.45],opl:[.04,.30,-.45],onl:[-.10,-.30,-.45],pr:[-.28,.30,-.45],
+  rpe:[-.395,-.30,-.45],bruch:[-.45,.30,-.45],fovea:[.05,0,.62],'ora-serrata':[.05,-1.15,-.45],
+  disc:[.10,.42,.10],cup:[.10,.10,.15],rim:[.10,.32,.20],lamina:[-.22,.10,.20],
+  rnfl:[.12,.50,.20],vessels:[-.10,.15,.25],bmo:[.05,.38,.15],
+};
+
+function microMaterial(color:string,opacity=1,roughness=.55){
+  const m=new THREE.MeshStandardMaterial({color,roughness,metalness:.02,transparent:opacity<1,opacity,side:THREE.DoubleSide,depthWrite:opacity>.85});
+  m.userData.baseOpacity=opacity;return m;
+}
+
+// Penampang kornea: 5 cangkang silindris konsentris anterior(+X) → posterior(−X),
+// melengkung seperti kubah kornea. Stroma paling tebal; ketebalan relatif
+// diperjelas (bukan µm asli). Busur di bidang X-Y, diekstrusi sepanjang Z.
+export function buildCorneaSection(){
+  const root=new THREE.Group();
+  const parts={} as Record<string,THREE.Group>;
+  const ids=['epithelium','bowman','stroma','descemet','endothelium'];
+  ids.forEach(id=>{const g=new THREE.Group();g.userData.detailSub=id;parts[id]=g;root.add(g);});
+  const H=.42,DEPTH=1.3,CX=.65-3.0;
+  function shell(r:number,depth=DEPTH,half=H,seg=56){
+    const g=new THREE.CylinderGeometry(r,r,depth,seg,1,true,Math.PI/2-half,half*2);
+    g.rotateX(Math.PI/2);return g;
+  }
+  const at=(rr:number,u:number,z=0)=>new THREE.Vector3(CX+rr*Math.cos(u),rr*Math.sin(u),z);
+  const outward=(u:number)=>new THREE.Vector3(Math.cos(u),Math.sin(u),0);
+  // [id, thickness, color]
+  const layers:[string,number,string][]=[
+    ['epithelium',.10,'#f2c9a0'],['bowman',.045,'#e8b4a0'],['stroma',.70,'#a9cfe0'],
+    ['descemet',.07,'#9db8e8'],['endothelium',.05,'#8fd0c2'],
+  ];
+  const GAP=.02;let r=3.0;const slabX:Record<string,number>={},slabT:Record<string,number>={};
+  for(const [id,t,col] of layers){
+    const mesh=new THREE.Mesh(shell(r),microMaterial(col,.96));
+    mesh.position.set(CX,0,0);mesh.userData.detailSub=id;parts[id].add(mesh);
+    slabX[id]=CX+r;slabT[id]=t;r-=t+GAP;
+  }
+  // Lamela stromal: 4 cangkang dalam samar.
+  const rStromaOut=slabX.stroma-CX;
+  for(let k=1;k<=4;k++){
+    const lam=new THREE.Mesh(shell(rStromaOut-.13*k,DEPTH-.1),microMaterial('#cfe4f2',.30));
+    lam.position.set(CX,0,0);lam.userData.detailSub='stroma';parts.stroma.add(lam);
+  }
+  // Sel epitel: 3×3 di permukaan luar, menghadap radial.
+  const rEpi=slabX.epithelium-CX-.015;
+  for(const u of [.14,.22,.30])for(const z of [-.35,0,.35]){
+    const cell=new THREE.Mesh(new THREE.BoxGeometry(.028,.05,.05),microMaterial('#c98d5e'));
+    cell.position.copy(at(rEpi,u,z));cell.lookAt(at(rEpi+.5,u,z));
+    cell.userData.detailSub='epithelium';parts.epithelium.add(cell);
+  }
+  // Sel endotel heksagonal di permukaan dalam.
+  const rEnd=slabX.endothelium-CX-.025;
+  for(let i=0;i<7;i++){
+    const z=-.45+i*.15;
+    const cell=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.02,6),microMaterial('#5aa894'));
+    cell.position.copy(at(rEnd,.22,z));
+    cell.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),outward(.22));
+    cell.userData.detailSub='endothelium';parts.endothelium.add(cell);
+  }
+  return {root,parts,slabX,slabT};
+}
+
+// Irisan sudut meridional: apeks Schwalbe (anterior) → basis spur (posterior).
+// TM di antara keduanya, Schlemm di luar JCT, kolektor radial ke sklera.
+export function buildAngleWedge(){
+  const root=new THREE.Group();
+  const parts={} as Record<string,THREE.Group>;
+  const ids=['schwalbe','uveal-tm','corneoscleral-tm','jct','schlemm-detail','collector','spur'];
+  ids.forEach(id=>{const g=new THREE.Group();g.userData.detailSub=id;parts[id]=g;root.add(g);});
+  function add(id:string,g:THREE.BufferGeometry,color:string,opacity=1){
+    const mesh=new THREE.Mesh(g,microMaterial(color,opacity));
+    mesh.userData.detailSub=id;parts[id].add(mesh);return mesh;
+  }
+  function tube(id:string,pts:THREE.Vector3[],r:number,color:string,opacity=1){
+    const mesh=new THREE.Mesh(
+      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),Math.max(12,pts.length*7),r,6,false),
+      microMaterial(color,opacity),
+    );
+    mesh.userData.detailSub=id;parts[id].add(mesh);return mesh;
+  }
+  // Konteks skematik (non-selektif): tepi kornea, akar iris, otot siliaris, sklera luar.
+  const ctx=new THREE.Group();ctx.userData.detailSub='';root.add(ctx);
+  function context(g:THREE.BufferGeometry,color:string,pos:[number,number,number],opacity=1){
+    const m=new THREE.Mesh(g,microMaterial(color,opacity));m.position.set(...pos);ctx.add(m);return m;
+  }
+  context(new THREE.BoxGeometry(.30,.10,.9),'#a6e5ea',[.95,.52,0],.5);          // tepi kornea
+  context(new THREE.BoxGeometry(.34,.16,.9),'#d9d2bd',[.22,.86,0]);            // dinding sklera luar
+  context(new THREE.BoxGeometry(.30,.10,.9),'#537f72',[.02,-.30,0]);           // akar iris
+  tube('spur',[new THREE.Vector3(.10,-.02,0),new THREE.Vector3(-.15,-.10,0),new THREE.Vector3(-.38,-.16,0)],.045,'#8a7a5a');
+  // Schwalbe: penanda apeks.
+  add('schwalbe',new THREE.SphereGeometry(.045,16,12),'#eef2f7').position.set(.80,.42,0);
+  // TM uveal: 3 tali sejajar (pori besar → tali kasar).
+  for(const dz of [-.10,0,.10]){
+    tube('uveal-tm',[new THREE.Vector3(.72,.36,dz),new THREE.Vector3(.52,.24,dz),new THREE.Vector3(.30,.12,dz)],.022,'#7fd6ae');
+  }
+  // TM korneoskleral: 4 lamela pipih sejajar.
+  for(let i=0;i<4;i++){
+    const m=add('corneoscleral-tm',new THREE.BoxGeometry(.52,.018,.80),'#5ecfa4');
+    m.position.set(.50,.27+i*.028,0);m.rotation.z=-.42;
+  }
+  // JCT: slab tipis tepat di dalam Schlemm.
+  const jct=add('jct',new THREE.BoxGeometry(.46,.05,.80),'#4fc39a');
+  jct.position.set(.44,.335,0);jct.rotation.z=-.42;
+  // Schlemm: silinder sepanjang Z (sirkumferensial) di luar JCT.
+  const sc=add('schlemm-detail',new THREE.CylinderGeometry(.085,.085,.80,20),'#5ab6cf');
+  sc.rotation.x=Math.PI/2;sc.position.set(.36,.44,0);
+  // Kolektor: 3 saluran radial Schlemm → sklera.
+  for(const dz of [-.22,0,.22]){
+    tube('collector',[new THREE.Vector3(.36,.52,dz),new THREE.Vector3(.30,.66,dz),new THREE.Vector3(.26,.80,dz)],.028,'#669ca6');
+  }
+  // Spur: blok jangkar di basis.
+  add('spur',new THREE.BoxGeometry(.24,.12,.90),'#d9d2bd').position.set(.10,-.02,0);
+  return {root,parts};
+}
+
+// ---------------------------------------------------------------------------
+// Fase 2: lensa + iris-siliaris. Konvensi lokal sama (+X anterior).
+// buildLensSection(acc01): 0 = jauh (zonula tegang, pipih), 1 = dekat
+// (zonula kendor, membulat). Ujung zonula selalu dihitung dari ekuator hasil
+// morph sehingga perlekatan tidak pernah lepas secara visual.
+// ---------------------------------------------------------------------------
+
+export function buildLensSection(acc01=0){
+  const a=Math.min(1,Math.max(0,acc01));
+  const halfT=.30*(1+.28*a);
+  const eqR=.55*(1-.13*a);
+  const root=new THREE.Group();
+  const parts={} as Record<string,THREE.Group>;
+  const ids=['capsule','lens-epithelium','cortex','nucleus','lens-fibers','lens-suture','zonule-attach'];
+  ids.forEach(id=>{const g=new THREE.Group();g.userData.detailSub=id;parts[id]=g;root.add(g);});
+  function add(id:string,g:THREE.BufferGeometry,color:string,opacity=1){
+    const mesh=new THREE.Mesh(g,microMaterial(color,opacity));
+    mesh.userData.detailSub=id;parts[id].add(mesh);return mesh;
+  }
+  function tube(id:string,pts:THREE.Vector3[],r:number,color:string,opacity=1){
+    const mesh=new THREE.Mesh(
+      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),Math.max(12,pts.length*7),r,6,false),
+      microMaterial(color,opacity),
+    );
+    mesh.userData.detailSub=id;parts[id].add(mesh);return mesh;
+  }
+  // Profil bikonveks: kutub anterior → ekuator → kutub posterior.
+  function lensProfile(scaleR:number,scaleX:number):[number,number][]{
+    const p:[number,number][]=[];
+    for(let i=0;i<=48;i++){const t=Math.PI*i/48;p.push([scaleX*halfT*Math.cos(t),Math.max(.0001,scaleR*eqR*Math.sin(t))]);}
+    return p;
+  }
+  add('capsule',revolve(lensProfile(1.05,1.05)),'#f4e6c2',.30);
+  add('cortex',revolve(lensProfile(.93,.93)),'#f0dcae',.55);
+  // Epitel: tudung anterior saja (di dalam kapsul, di luar korteks).
+  const cap:[number,number][]=[];
+  for(let i=0;i<=20;i++){const t=1.05*i/20;cap.push([halfT*.96*Math.cos(t),Math.max(.0001,eqR*.96*Math.sin(t))]);}
+  add('lens-epithelium',revolve(cap),'#e8b06a',.85);
+  for(let i=0;i<6;i++){
+    const t=.25+.6*i/5;const cell=add('lens-epithelium',new THREE.BoxGeometry(.03,.05,.05),'#c07f3e');
+    cell.position.set(halfT*.90*Math.cos(t),eqR*.90*Math.sin(t),.30);
+  }
+  const nucleus=add('nucleus',new THREE.SphereGeometry(1,40,28),'#d9a84e',.92);
+  nucleus.scale.set(halfT*.55,eqR*.55,eqR*.55);nucleus.position.x=-.02;
+  // Serabut meridional: kutub → ekuator → kutub, 8 azimut.
+  for(let k=0;k<8;k++){
+    const az=k/8*Math.PI*2;const c=Math.cos(az),s=Math.sin(az);
+    const pts=[.8,.35,0,-.35,-.8].map(f=>new THREE.Vector3(
+      f*halfT*.85,
+      Math.sqrt(Math.max(0,1-f*f))*.80*eqR*c+(f===0?0:0),
+      Math.sqrt(Math.max(0,1-f*f))*.80*eqR*s,
+    ));
+    tube('lens-fibers',pts,.012,'#e5cf9e');
+  }
+  // Sutura Y anterior + Y offset posterior di kutub.
+  for(const [px,rot] of [[halfT*.86,0],[-halfT*.86,Math.PI/3]] as const){
+    for(let b=0;b<3;b++){
+      const ang=rot+b*2*Math.PI/3;
+      tube('lens-suture',[new THREE.Vector3(px,0,0),new THREE.Vector3(px+(px>0?.06:-.06),.11*Math.cos(ang),.11*Math.sin(ang))],.010,'#c9a24e');
+    }
+  }
+  // Zonula 3 tine × 4 azimut: kapsul ekuator → cincin siliaris (konteks).
+  // Cincin ikut bergerak anterior (+X) dan sentripetal (radius −) bersama otot.
+  const ringR=eqR+.35-.05*a,ringFwd=.08*a;
+  for(const az of [0,Math.PI/2,Math.PI,3*Math.PI/2]){
+    const c=Math.cos(az),s=Math.sin(az);
+    const eq=(fx:number,fr:number)=>new THREE.Vector3(fx*halfT,fr*eqR*c,fr*eqR*s);
+    const ring=(fx:number)=>new THREE.Vector3(fx*halfT+ringFwd,ringR*c,ringR*s);
+    tube('zonule-attach',[eq(.15,1.0),ring(.10)],.008,'#dfd3ad',.9);
+    tube('zonule-attach',[eq(-.15,1.0),ring(-.05)],.008,'#cfc09a',.9);
+    tube('zonule-attach',[eq(0,1.0),ring(.02)],.008,'#e8dcbc',.9);
+  }
+  // Konteks: cincin siliaris tempat zonula bermuara (non-selektif).
+  const ctx=new THREE.Group();root.add(ctx);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(ringR,.045,10,64),microMaterial('#b07278'));
+  ring.rotation.y=Math.PI/2;ring.position.x=ringFwd;ctx.add(ring);
+  return {root,parts,halfT,eqR};
+}
+
+// Irisan meridional iris–siliaris: diafragma iris (x≈.55) + kompleks siliaris
+// posterior. Sfingter di margin pupil sedikit anterior dari lembar dilator.
+// acc01 menggeser massa otot anterior (+X) dan sentripetal (−Y atas) mengikuti
+// data UBM/OCT: anterior menebal, cincin menyempit; zonula konteks mengendur.
+export function buildIrisCiliarySection(acc01=0){
+  const a=Math.min(1,Math.max(0,acc01));
+  const fX=.10*a,iY=.05*a;
+  const root=new THREE.Group();
+  const parts={} as Record<string,THREE.Group>;
+  const ids=['sphincter','dilator','ciliary-muscle','pars-plicata','ciliary-process','pars-plana','pe','npe'];
+  ids.forEach(id=>{const g=new THREE.Group();g.userData.detailSub=id;parts[id]=g;root.add(g);});
+  function add(id:string,g:THREE.BufferGeometry,color:string,opacity=1){
+    const mesh=new THREE.Mesh(g,microMaterial(color,opacity));
+    mesh.userData.detailSub=id;parts[id].add(mesh);return mesh;
+  }
+  function tube(id:string,pts:THREE.Vector3[],r:number,color:string,opacity=1){
+    const mesh=new THREE.Mesh(
+      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),Math.max(12,pts.length*7),r,6,false),
+      microMaterial(color,opacity),
+    );
+    mesh.userData.detailSub=id;parts[id].add(mesh);return mesh;
+  }
+  const ctx=new THREE.Group();root.add(ctx);
+  function context(g:THREE.BufferGeometry,color:string,pos:[number,number,number],opacity=1){
+    const m=new THREE.Mesh(g,microMaterial(color,opacity));m.position.set(...pos);ctx.add(m);return m;
+  }
+  // Stroma iris: diafragma berlubang pupil (konteks).
+  const sph=add('sphincter',new THREE.TorusGeometry(.17,.032,12,64),'#7fb894');
+  sph.rotation.y=Math.PI/2;sph.position.x=.57;
+  // Dilator: 10 jeruji radial pada permukaan posterior iris.
+  for(let k=0;k<10;k++){
+    const az=k/10*Math.PI*2;
+    const m=add('dilator',new THREE.BoxGeometry(.012,.36,.05),'#a8c69a');
+    m.position.set(.53,.37*Math.cos(az),.37*Math.sin(az));m.rotation.x=az;
+  }
+  context(revolve([[.58,.16],[.56,.35],[.55,.60],[.52,.60],[.53,.35],[.55,.16],[.58,.16]]),'#537f72',[0,0,0]);
+  // Otot siliaris: pita longitudinal + berkas sirkular di akar iris.
+  tube('ciliary-muscle',[new THREE.Vector3(.35+fX,.62-iY,0),new THREE.Vector3(.10+fX,.68-iY,0),new THREE.Vector3(-.20+fX,.70-iY,0)],.060*(1+.15*a),'#b07278');
+  const circ=add('ciliary-muscle',new THREE.TorusGeometry(.60-.04*a,.045,10,72),'#a5666e');
+  circ.rotation.y=Math.PI/2;circ.position.x=.48+fX;
+  // Pars plicata: zona + 6 rigi prosesus di wajah dalamnya.
+  const plicata=add('pars-plicata',new THREE.BoxGeometry(.30,.04,.80),'#c89190');
+  plicata.position.set(.15+fX,.60-iY,0);
+  for(let i=0;i<6;i++){
+    const fold=add('ciliary-process',new THREE.BoxGeometry(.12,.05,.06),'#d8a0a4');
+    fold.position.set(.28-i*.05+fX,.555-iY,-.30+i*.12);
+  }
+  // Pars plana: pita halus posterior (menetap: berjangkar ke sklera/khoroid).
+  const plana=add('pars-plana',new THREE.BoxGeometry(.40,.03,.80),'#b99a90');
+  plana.position.set(-.18,.63,0);
+  // Bilayer: PE luar (stromal) + NPE dalam (sekretorik).
+  const peLayer=add('pe',new THREE.BoxGeometry(.62,.012,.80),'#5a3a34');
+  peLayer.position.set(.02+fX,.585-iY,0);
+  const npeLayer=add('npe',new THREE.BoxGeometry(.62,.012,.80),'#e0bc9e');
+  npeLayer.position.set(.02+fX,.572-iY,0);
+  // Konteks: tepi lensa + zonula + dinding sklera luar.
+  const lensEdge=context(new THREE.SphereGeometry(1,32,20),'#e9d7aa',[.35,0,0],.4);
+  lensEdge.scale.set(.25,.40,.40);
+  for(const dz of [-.15,0,.15]){
+    const z=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
+      new THREE.Vector3(.10+fX,.55-iY,dz),new THREE.Vector3(.25,.47-.05*a,dz),new THREE.Vector3(.35,.40,dz),
+    ]),12,.008,6,false),microMaterial('#dfd3ad',.9));
+    ctx.add(z);
+  }
+  context(new THREE.BoxGeometry(.9,.10,.9),'#d9d2bd',[-.02,.88,0]);
+  return {root,parts};
+}
+
+// ---------------------------------------------------------------------------
+// Fase 3: retina + kepala saraf optik. +X = vitreal/anterior.
+// ---------------------------------------------------------------------------
+
+// Tumpukan 10 lapis melengkung (vitreal→skleral) + inset fovea + baji ora.
+// Busur di bidang X-Y seperti segmen dinding bola mata, diekstrusi sepanjang Z.
+// Ketebalan relatif diperjelas; ONL dibuat paling tebal, ILM/Bruch paling tipis.
+export function buildRetinaSection(){
+  const root=new THREE.Group();
+  const parts={} as Record<string,THREE.Group>;
+  const ids=['ilm','nfl','gcl','ipl','inl','opl','onl','pr','rpe','bruch','fovea','ora-serrata'];
+  ids.forEach(id=>{const g=new THREE.Group();g.userData.detailSub=id;parts[id]=g;root.add(g);});
+  function add(id:string,g:THREE.BufferGeometry,color:string,opacity=1){
+    const mesh=new THREE.Mesh(g,microMaterial(color,opacity));
+    mesh.userData.detailSub=id;parts[id].add(mesh);return mesh;
+  }
+  const H=.5,R0=2.6,CX=.62-R0,ZC=-.5,DEPTH=.9;
+  function shell(r:number,half=H,depth=DEPTH,ts=Math.PI/2-half,seg=56){
+    const g=new THREE.CylinderGeometry(r,r,depth,seg,1,true,ts,half*2);
+    g.rotateX(Math.PI/2);return g;
+  }
+  const at=(rr:number,u:number,z=ZC)=>new THREE.Vector3(CX+rr*Math.cos(u),rr*Math.sin(u),z);
+  const outward=(u:number)=>new THREE.Vector3(Math.cos(u),Math.sin(u),0);
+  // [id, thickness, color] — tumpukan utama.
+  const slabs:[string,number,string][]=[
+    ['ilm',.035,'#cfe3ee'],['nfl',.12,'#e8c88a'],['gcl',.09,'#e8a87e'],
+    ['ipl',.10,'#dfc39a'],['inl',.12,'#d9b48f'],['opl',.07,'#d4a982'],
+    ['onl',.17,'#c99a72'],['pr',.14,'#f0d060'],['rpe',.06,'#6b4a3a'],
+    ['bruch',.035,'#8a7a5e'],
+  ];
+  const GAP=.015;let r=R0;const slabX:Record<string,number>={};
+  for(const [id,t,col] of slabs){
+    const m=add(id,shell(r),col);
+    m.position.set(CX,0,ZC);slabX[id]=CX+r;r-=t+GAP;
+  }
+  const slabR=(id:string)=>slabX[id]-CX;
+  // Arkade pembuluh superior/inferior di NFL (lurus sepanjang Z).
+  for(const [u,col] of [[.28,'#c0392b'],[-.28,'#7a2a22']] as const){
+    const v=add('nfl',new THREE.CylinderGeometry(.022,.022,DEPTH,10),col);
+    v.rotation.x=Math.PI/2;
+    v.position.set(CX+slabR('nfl')*Math.cos(u),slabR('nfl')*Math.sin(u),ZC);
+  }
+  // Glif batang (langsing) / kerucut (meruncing), sumbu radial.
+  const up=new THREE.Vector3(0,1,0),fwd=new THREE.Vector3(1,0,0);
+  for(let i=0;i<12;i++){
+    const u=-.33+i*.06;
+    const dir=outward(u);
+    if(i%2===0){
+      const rod=add('pr',new THREE.BoxGeometry(.13,.028,.028),'#b8862e');
+      rod.position.copy(at(slabR('pr'),u,ZC));
+      rod.quaternion.setFromUnitVectors(fwd,dir);
+    }else{
+      const cone=add('pr',new THREE.CylinderGeometry(.014,.030,.13,6),'#f5d76e');
+      cone.position.copy(at(slabR('pr'),u,ZC));
+      cone.quaternion.setFromUnitVectors(up,dir);
+    }
+  }
+  // Garis ELM di batas ONL–PR.
+  add('pr',shell((slabR('onl')+slabR('pr'))/2,DEPTH-.04),'#8a6a3a',.85).position.set(CX,0,ZC);
+  // Sel RPE heksagonal, sumbu radial.
+  for(let i=0;i<6;i++){
+    const u=-.30+i*.12;
+    const cell=add('rpe',new THREE.CylinderGeometry(.07,.07,.05,6),'#7d5744');
+    cell.position.copy(at(slabR('rpe'),u,ZC));
+    cell.quaternion.setFromUnitVectors(up,outward(u));
+  }
+  // Inset fovea (z=+.5): hanya ILM+ONL+PR+RPE, kerucut padat di lantai pit,
+  // dinding corong = lapis dalam yang tersibak.
+  const FZ=.5,RF=1.1,C2X=.30-RF;
+  const fShell=(r:number)=>{const g=new THREE.CylinderGeometry(r,r,.5,40,1,true,Math.PI/2-.38,.76);g.rotateX(Math.PI/2);return g;};
+  let rf=RF;
+  for(const [t,col] of [[.03,'#cfe3ee'],[.12,'#c99a72'],[.14,'#f5d76e'],[.06,'#6b4a3a']] as const){
+    const m=add('fovea',fShell(rf),col);
+    m.position.set(C2X,0,FZ);rf-=t+.015;
+  }
+  for(let i=0;i<8;i++){
+    const cone=add('fovea',new THREE.CylinderGeometry(.012,.026,.12,6),'#f7dd70');
+    cone.rotation.z=Math.PI/2;cone.position.set(.05,-.21+i*.06,FZ);
+  }
+  const funnel=add('fovea',new THREE.CylinderGeometry(.32,.12,.30,24,1,true),'#e8a87e',.85);
+  funnel.rotation.z=-Math.PI/2;funnel.position.set(.22,0,FZ);
+  // Baji ora serrata: pita meruncing di bawah tumpukan → garis NPE → plana.
+  const oraCols=['#9ab87e','#8aa870','#7a9863'] as const;
+  [.30,.24,.18].forEach((len,i)=>{
+    const band=add('ora-serrata',shell(R0-.35-.20*i,len,DEPTH,Math.PI/2-.85),oraCols[i],.9-i*.1);
+    band.position.set(CX,0,ZC);
+  });
+  const npePts:THREE.Vector3[]=[];
+  for(let i=0;i<=8;i++){const u=-.85+.30*i/8;npePts.push(at(R0-.95,u,ZC));}
+  const npeTube=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(npePts),24,.012,6,false),microMaterial('#e0bc9e'));
+  npeTube.userData.detailSub='ora-serrata';parts['ora-serrata'].add(npeTube);
+  // Konteks: gel vitreus (luar) + khoroid (dalam) + pita plana.
+  const ctx=new THREE.Group();root.add(ctx);
+  function context(g:THREE.BufferGeometry,color:string,pos:[number,number,number],opacity=1){
+    const m=new THREE.Mesh(g,microMaterial(color,opacity));m.position.set(...pos);ctx.add(m);return m;
+  }
+  context(shell(R0+.18), '#a6b9ce',[CX,0,ZC],.15);
+  context(shell(R0-1.20),'#915043',[CX,0,ZC]);
+  context(shell(R0-1.06,.20,DEPTH,Math.PI/2-.95),'#b99a90',[CX,0,ZC]);
+  return {root,parts,slabX};
+}
+
+// Kepala saraf: wajah diskus (+X) → kanal sklera → lamina → saraf (−X).
+// Trunk vaskular di kuadran nasal-atas (−Z, +Y).
+export function buildONHSection(){
+  const root=new THREE.Group();
+  const parts={} as Record<string,THREE.Group>;
+  const ids=['disc','cup','rim','lamina','rnfl','vessels','bmo'];
+  ids.forEach(id=>{const g=new THREE.Group();g.userData.detailSub=id;parts[id]=g;root.add(g);});
+  function add(id:string,g:THREE.BufferGeometry,color:string,opacity=1){
+    const mesh=new THREE.Mesh(g,microMaterial(color,opacity));
+    mesh.userData.detailSub=id;parts[id].add(mesh);return mesh;
+  }
+  function tube(id:string,pts:THREE.Vector3[],r:number,color:string,opacity=1){
+    const mesh=new THREE.Mesh(
+      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),Math.max(16,pts.length*8),r,6,false),
+      microMaterial(color,opacity),
+    );
+    mesh.userData.detailSub=id;parts[id].add(mesh);return mesh;
+  }
+  // Cakram: anulus wajah + dinding samping + dinding belakang (bukan solid,
+  // agar mangkuk cup yang tersembam terlihat). Cup: mangkuk dangkal bermuara
+  // di wajah diskus (r≈.19) dan mendasar di x≈.05.
+  const face=add('disc',new THREE.RingGeometry(.19,.34,48),'#f0bd93');
+  face.rotation.y=Math.PI/2;face.position.x=.12;
+  const wall=add('disc',new THREE.CylinderGeometry(.34,.34,.08,48,1,true),'#e8ae85');
+  wall.rotation.z=Math.PI/2;wall.position.x=.08;
+  const back=add('disc',new THREE.CircleGeometry(.34,48),'#df9f78');
+  back.rotation.y=Math.PI/2;back.position.x=.04;
+  const bmo=add('bmo',new THREE.TorusGeometry(.34,.015,8,64),'#8a7a5e');
+  bmo.rotation.y=Math.PI/2;bmo.position.x=.045;
+  const rim=add('rim',new THREE.TorusGeometry(.27,.075,12,56),'#e8a06a');
+  rim.rotation.y=Math.PI/2;rim.position.x=.10;
+  // Cup: mangkuk dangkal tersembam di wajah diskus.
+  const cup=add('cup',new THREE.SphereGeometry(.30,28,14,0,Math.PI*2,0,.68),'#f2e3c8',.95);
+  cup.rotation.z=Math.PI/2;cup.position.x=.353;
+  // Serabut prapapiler: 12 jari-jari perifer → rim + 6 berkas menukik ke lamina.
+  for(let k=0;k<12;k++){
+    const az=k/12*Math.PI*2;const c=Math.cos(az),s=Math.sin(az);
+    tube('rnfl',[new THREE.Vector3(.13,.58*c,.58*s),new THREE.Vector3(.13,.44*c,.44*s),new THREE.Vector3(.12,.30*c,.30*s)],.020,'#e8c88a');
+  }
+  for(let k=0;k<6;k++){
+    const az=k/6*Math.PI*2+.26;const c=Math.cos(az),s=Math.sin(az);
+    tube('rnfl',[new THREE.Vector3(.10,.27*c,.27*s),new THREE.Vector3(-.10,.24*c,.24*s),new THREE.Vector3(-.35,.22*c,.22*s),new THREE.Vector3(-.55,.20*c,.20*s)],.018,'#dfb878');
+  }
+  // Lamina: 3 lempeng kisi posterior.
+  for(const px of [-.12,-.19,-.26]){
+    for(const oz of [-.15,0,.15]){
+      const beamY=add('lamina',new THREE.BoxGeometry(.025,.56,.06),'#cbb89a');
+      beamY.position.set(px,0,oz);
+    }
+    for(const oy of [-.15,0,.15]){
+      const beamZ=add('lamina',new THREE.BoxGeometry(.025,.06,.50),'#c2ad8a');
+      beamZ.position.set(px,oy,0);
+    }
+  }
+  // Trunk sentral nasal-atas: arteri + vena menembus lamina → berarkade.
+  tube('vessels',[new THREE.Vector3(-.55,.04,-.06),new THREE.Vector3(-.20,.04,-.06),new THREE.Vector3(.02,.06,-.04),new THREE.Vector3(.12,.16,-.02),new THREE.Vector3(.12,.30,.06)],.026,'#c0392b');
+  tube('vessels',[new THREE.Vector3(-.55,.02,-.10),new THREE.Vector3(-.20,.02,-.09),new THREE.Vector3(.02,.03,-.07),new THREE.Vector3(.12,-.06,-.02),new THREE.Vector3(.12,-.22,.08)],.030,'#7a2a22');
+  // Konteks: dinding sklera + mielin pasca-lamina + jaringan tepi.
+  const ctx=new THREE.Group();root.add(ctx);
+  function context(g:THREE.BufferGeometry,color:string,opacity=1){
+    const m=new THREE.Mesh(g,microMaterial(color,opacity));ctx.add(m);return m;
+  }
+  const scl=context(new THREE.TorusGeometry(.52,.14,12,56),'#d9d8cd');scl.rotation.y=Math.PI/2;scl.position.x=-.15;
+  const border=context(new THREE.TorusGeometry(.42,.03,8,56),'#c9bda6');border.rotation.y=Math.PI/2;border.position.x=.02;
+  for(let k=0;k<3;k++){
+    const az=k/3*Math.PI*2+.5;
+    const my=context(new THREE.CylinderGeometry(.05,.05,.12,10),'#f3d5b0',.85);
+    my.rotation.z=Math.PI/2;my.position.set(-.45,.20*Math.cos(az),.20*Math.sin(az));
+  }
+  return {root,parts};
+}
+
+// ---------------------------------------------------------------------------
+// Fisiologi: loop konveksi termal bilik anterior (mata tegak). Naik di sisi
+// hangat iris/lensa (±37 °C), turun di sisi dingin kornea (±34 °C). Kurva
+// tertutup di dua bidang meridional (atas + bawah).
+// ---------------------------------------------------------------------------
+
+export function convectionLoops():THREE.CatmullRomCurve3[]{
+  const loops:THREE.CatmullRomCurve3[]=[];
+  for(const a of [Math.PI/2,-Math.PI/2]){
+    const p=(x:number,r:number)=>new THREE.Vector3(x,r*Math.cos(a),r*Math.sin(a));
+    loops.push(new THREE.CatmullRomCurve3([
+      p(.715,.13),p(.72,.25),p(.75,.40),p(.80,.47),p(.88,.40),p(.93,.25),p(.93,.12),p(.82,.10),
+    ],true));
+  }
+  return loops;
+}
+
