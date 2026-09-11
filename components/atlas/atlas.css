@@ -215,3 +215,30 @@ html.ocula-light .neraca{border:1px solid #c3cfd5;background:#fff}
 html.ocula-light .neraca span{color:#2c5a41}
 html.ocula-light .skip-link{background:#14532d;color:#fff}
 .preset-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}.preset-row button{font-size:12px;color:#b5c3b9;border:1px solid #414b3f;border-radius:4px;padding:7px 9px;line-height:1.5}.preset-row button.active{background:#494334;border-color:#8b7d51;color:#e5d5a8}.neraca{margin-top:14px;border:1px solid #34424c;border-radius:6px;background:#1b262f;padding:10px 12px;display:grid;gap:4px}.neraca span{font-size:12px;color:#a9bfae;line-height:1.6}.vision-comparison.night{background:#0b1118}.vision-comparison.night>div>span{color:#8fa3b8}.sim-eye{position:relative;overflow:hidden}.glare-source{position:absolute;left:50%;top:34%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#fffbe8 0%,#ffedb5 28%,#ffd98a55 55%,transparent 72%);box-shadow:0 0 18px 6px #ffe9a866;pointer-events:none}.veil{position:absolute;inset:0;background:#e8eef4;pointer-events:none}
+/* ============ LIPATAN PROGRESIF ============ */
+.fold{border-top:1px solid var(--line);margin-top:18px;padding-top:13px}
+.fold>summary{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:550;color:#c8d5cd;list-style:none;padding:2px 0}
+.fold>summary::-webkit-details-marker{display:none}
+.fold>summary>svg:last-child{margin-left:auto;color:#809d90;transition:transform .18s}
+.fold[open]>summary>svg:last-child{transform:rotate(90deg)}
+.fold-body{padding-top:10px}
+.fold-body>p{font-size:14px;color:#a5b6c4;line-height:1.85}
+.fold-body>p+p{margin-top:10px}
+.fold-thickness{font-size:12px;color:#8fa5b3}
+.fold-body .findings{margin-top:2px}
+details.structure-group{padding:0 0 4px}
+details.structure-group>summary{display:flex;align-items:center;gap:8px;list-style:none;padding:15px 9px 9px;cursor:pointer}
+details.structure-group>summary::-webkit-details-marker{display:none}
+details.structure-group>summary h3{font-size:12px;font-weight:500;color:#8394a4;letter-spacing:.2px;flex:1;padding:0}
+details.structure-group>summary>span{font-size:11px;color:#617380}
+details.structure-group>summary>svg{color:#809d90;transition:transform .18s}
+details.structure-group[open]>summary>svg{transform:rotate(90deg)}
+details.structure-group .structure-row{margin-left:2px;margin-right:2px}
+html.ocula-light .fold{border-top:1px solid var(--line)}
+html.ocula-light .fold>summary{color:#12372a}
+html.ocula-light .fold>summary>svg:last-child{color:#3f6b58}
+html.ocula-light .fold-body>p{color:#43565f}
+html.ocula-light .fold-thickness{color:#5b6b78}
+html.ocula-light details.structure-group>summary h3{color:#5b6b78}
+html.ocula-light details.structure-group>summary>span{color:#75828d}
+html.ocula-light details.structure-group>summary>svg{color:#3f6b58}
