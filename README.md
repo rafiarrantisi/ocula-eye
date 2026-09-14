@@ -1,6 +1,6 @@
 # Ocula — Interactive Ophthalmology Atlas
 
-A browser based, Indonesian language educational eye explorer for medical students. This is a functional first edition with a procedural right-eye model, not a clinically validated anatomical reconstruction.
+A browser based, Indonesian language educational eye explorer for medical students, with procedural right/left eye and orbital anatomy. The geometry is educational and has not been clinically validated.
 
 ## Run
 
@@ -13,7 +13,9 @@ The portable preview starts at http://localhost:5173. Build with `npm run build`
 
 ## Implemented
 
-- 14 independently selectable structures; orbit, touch, keyboard rotation, zoom, visibility, opacity, isolation, intact, cutaway, exploded, and camera presets.
+- 32 independently selectable globe and orbital structures; touch/keyboard rotation, zoom, visibility, opacity, multi-isolation, intact/cutaway/exploded views, and camera presets.
+- Right/left eyes, axial length, internal anterior chamber depth, pupil diameter, and illustrative age changes, with explicitly categorized presets.
+- Freely oriented and translated sections with triangulated tissue caps, reversible layer dissection, adjustable explosion distance, and connectors to original positions. See [orbital exploration](docs/orbit-exploration.md) for scope, controls, and validation.
 - Guided layer exploration and contextual anatomy, spatial relations, clinical notes, source links, and knowledge checks.
 - Aqueous production, posterior chamber, pupil, anterior chamber, conventional and uveoscleral routes. Pausable particles and step selection.
 - Modified Goldmann steady state calculation with adjustable production, outflow facility, and uveoscleral outflow. This calculation does not drive a CFD simulation.

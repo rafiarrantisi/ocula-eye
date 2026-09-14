@@ -6,11 +6,11 @@ Functional educational first edition, September 2026. Parametric teaching geomet
 
 ## Coordinates and representation
 
-Right eye. +X anterior, +Y superior, +Z temporal. One geometry unit is approximately 12 mm. Scleral globe radius is 1 unit, corneal curvature radius 0.675 units; lens radius 0.39 units, thickness 0.34 units. These are illustrative adult proportions, not a biometric reference population. Variation with age, refraction and accommodation is not modeled.
+Reference coordinates use +X anterior, +Y superior, +Z temporal for the right eye, at approximately 12 mm per unit. The macro Anatomy module supports mirrored left/right eyes, axial length, internal anterior chamber depth, pupil diameter, and illustrative age-related lens thickness. These are teaching parameters, not a biometric reference population or diagnostic model. The six enlarged detail views and physiology modules use independent schematic reference geometry. See [orbital exploration](docs/orbit-exploration.md) for definitions and limits.
 
 The sclera, choroid and retina are nested, posterior coats; the retinal shell ends before the ciliary body. The lens is posterior to the iris. The pupil is an aperture, not a solid structure. Anterior and posterior aqueous chambers are separate from the vitreous cavity. Zonules connect ciliary region to lens equator. The optic disc is nasal relative to the illustrated macular landmark.
 
-The cutaway removes the near hemisphere of outer coats and portions of the anterior segment. Residual surfaces and selected transparent compartments do not have clinical section thickness. Exploded view deliberately displaces anatomy and pauses the display of flow routes. Tissue colors, channel caliber, shell thicknesses, fibers and vessels are visually emphasized. Iris striae, ciliary processes and retinal vessel branches are procedural, not recovered from microscopy. The nerve exit is an illustrative overlap with the coats, not a modeled lamina cribrosa or scleral canal.
+The macro Anatomy cutaway uses a freely positioned plane and tissue caps triangulated from actual mesh intersections, preserving apertures and hollow coats. Physiology modules retain their original fixed cutaway. Exploded view deliberately displaces anatomy; adjustable gaps and origin connectors preserve the relation to resting positions. Tissue colors, channel caliber, shell thicknesses, fibers and vessels are visually emphasized. Iris striae, ciliary processes and retinal vessel branches are procedural, not recovered from microscopy. The macro nerve exit is an illustrative overlap with the coats; its separate detail view supplies schematic optic nerve head anatomy.
 
 ## Aqueous physiology
 

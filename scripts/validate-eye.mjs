@@ -1,10 +1,12 @@
+import {orbitAnchors} from '../components/atlas/orbitGeometry.ts';
+import {isOrbital} from '../components/atlas/orbitContent.ts';
 import assert from 'node:assert/strict';
 import {buildEye,disposeObject,anchors,flowPaths,EYE,buildCorneaSection,buildAngleWedge,buildLensSection,buildIrisCiliarySection,buildRetinaSection,buildONHSection,convectionLoops,microAnchors} from '../components/atlas/geometry.ts';
 import {structures,sources,illustrativeIOP,corneaLayers,angleStructures,lensLayers,irisCiliaryStructures,retinaLayers,onhStructures,aqueousBalance,applyLighting,straylightGain} from '../components/atlas/content.ts';
 import * as THREE from 'three';
 
-assert.equal(new Set(structures.map(s=>s.id)).size,14);
-for(const s of structures){assert.ok(anchors[s.id]);s.sources.forEach(id=>assert.ok(sources.some(r=>r.id===id)));}
+assert.equal(new Set(structures.map(s=>s.id)).size,32);
+for(const s of structures){assert.ok(anchors[s.id]||orbitAnchors[s.id]);s.sources.forEach(id=>assert.ok(sources.some(r=>r.id===id)));}
 assert.ok(EYE.lensX+EYE.lensHalfThickness<EYE.irisX,'Lens anterior pole stays posterior to iris plane.');
 assert.ok(EYE.pupilRadius<EYE.lensRadius&&EYE.lensRadius<EYE.limbusRadius);
 assert.equal(illustrativeIOP(2.5,.25,.5,9),17);
@@ -12,7 +14,7 @@ assert.ok(illustrativeIOP(2.5,.1,.5)>illustrativeIOP(2.5,.3,.5),'Lower facility 
 assert.ok(illustrativeIOP(2.5,.3,.8)<illustrativeIOP(2.5,.3,.5),'Greater unconventional outflow must lower pressure.');
 for(const cut of [false,true]){
   const eye=buildEye(cut);let count=0,triangles=0;
-  assert.deepEqual(Object.keys(eye.parts).sort(),structures.map(s=>s.id).sort());
+  assert.deepEqual(Object.keys(eye.parts).sort(),structures.filter(s=>!isOrbital(s.id)).map(s=>s.id).sort());
   eye.root.traverse(o=>{if(o instanceof THREE.Mesh){count++;const p=o.geometry.getAttribute('position');assert.ok(p.count>0);for(const n of p.array)assert.ok(Number.isFinite(n),'Nonfinite vertex');o.geometry.computeBoundingBox();assert.ok(o.geometry.boundingBox);const idx=o.geometry.getIndex();if(idx){for(const i of idx.array)assert.ok(i>=0&&i<p.count);triangles+=idx.count/3;}assert.ok(o.userData.id);}});
   assert.ok(count<100,`Expected batched geometry, got ${count} draw calls.`);
   if(cut){const bounds=new THREE.Box3().setFromObject(eye.parts.sclera);assert.ok(bounds.max.z<.012,'Cutaway must remove the near hemisphere.');}

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import type { StructureId } from './types';
+import type { GlobeStructureId as StructureId } from './types';
 
 // Anatomical coordinate convention: +X anterior, +Y superior, +Z temporal.
 // One model unit = approximately 12 mm. Geometry is a teaching schematic,
@@ -39,7 +39,13 @@ export function buildEye(cut:boolean){
   (Object.keys(anchors) as StructureId[]).forEach(id=>{const group=new THREE.Group();group.userData.id=id;parts[id]=group;root.add(group);});
   function material(color:string,opacity=1,roughness=.52){const m=new THREE.MeshStandardMaterial({color,roughness,metalness:.025,transparent:opacity<1,opacity,side:THREE.DoubleSide,depthWrite:opacity>.85});m.userData.baseOpacity=opacity;return m;}
   function add(id:StructureId,g:THREE.BufferGeometry,color:string,opacity=1,roughness=.52){const mesh=new THREE.Mesh(g,material(color,opacity,roughness));mesh.userData.id=id;parts[id].add(mesh);return mesh;}
-  function tube(id:StructureId,pts:THREE.Vector3[],r:number,color:string,opacity=1){return add(id,new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),Math.max(12,pts.length*7),r,6,false),color,opacity);}
+  function tube(id:StructureId,pts:THREE.Vector3[],r:number,color:string,opacity=1){
+    const segments=Math.max(12,pts.length*7),sides=6,curve=new THREE.CatmullRomCurve3(pts);
+    const g=new THREE.TubeGeometry(curve,segments,r,sides,false);
+    const pos=Array.from(g.getAttribute('position').array),uv=Array.from(g.getAttribute('uv').array),idx=Array.from(g.getIndex()!.array);
+    for(const end of [0,segments]){const center=pos.length/3;pos.push(...curve.getPointAt(end/segments).toArray());uv.push(.5,.5);for(let j=0;j<sides;j++){const a=end*(sides+1)+j,b=a+1;idx.push(...(end===0?[center,b,a]:[center,a,b]));}}
+    g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();return add(id,g,color,opacity);
+  }
   const sclera=add('sclera',shell(1,.029,.77,cut),'#d9d8cd',1,.74);
   add('choroid',shell(.968,.023,.56,cut),'#915043',1,.7);
   add('retina',shell(.941,.014,.41,cut),'#e5916e',1,.63);
@@ -51,6 +57,8 @@ export function buildEye(cut:boolean){
   const cp:[number,number][]=[];
   const theta=Math.acos((.77-.35)/.675);
   for(let i=0;i<=40;i++){const a=theta*i/40;cp.push([.35+.675*Math.cos(a),.675*Math.sin(a)]);}
+  // Closed corneal volume; endothelial apex is x=1.000.
+  for(let i=40;i>=0;i--){const a=theta*i/40;cp.push([.35+.650*Math.cos(a),.650*Math.sin(a)]);}cp.push(cp[0]);
   // Keep a clear corneal window, with an edge ring at the limbus.
   add('cornea',revolve(cp,cut?Math.PI:0,cut?Math.PI:2*Math.PI),'#a6e5ea',.23,.12);
   const rimGeometry=new THREE.TorusGeometry(.529,.0055,8,128,cut?Math.PI:Math.PI*2);if(cut)rimGeometry.rotateZ(-Math.PI/2);

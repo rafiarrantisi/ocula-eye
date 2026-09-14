@@ -1,6 +1,12 @@
 import type { Structure, ModuleId, CataractType } from './types';
+import {orbitalStructures} from './orbitContent.ts';
 
 export const sources = [
+  {id:'orbit-anatomy',title:'Anatomy, Head and Neck, Orbit',author:'StatPearls · NCBI Bookshelf',url:'https://www.ncbi.nlm.nih.gov/books/NBK539843/',scope:'Orbita, selubung, kelopak, dan hubungan struktur; bentuk 3D adalah rekonstruksi skematik.'},
+  {id:'eom-anatomy',title:'Anatomy, Head and Neck, Eye Extraocular Muscles',author:'StatPearls · NCBI Bookshelf',url:'https://www.ncbi.nlm.nih.gov/books/NBK519565/',scope:'Asal, insersi, arah otot, serta inervasi otot ekstraokular.'},
+  {id:'lacrimal-anatomy',title:'Anatomy, Head and Neck: Eye Lacrimal Gland',author:'StatPearls · NCBI Bookshelf',url:'https://www.ncbi.nlm.nih.gov/books/NBK532914/',scope:'Kelenjar lakrimal dan hubungan dengan permukaan mata.'},
+  {id:'lacrimal-drainage',title:'Anatomy, Head and Neck: Eye Nasolacrimal',author:'StatPearls · NCBI Bookshelf',url:'https://www.ncbi.nlm.nih.gov/books/NBK482213/',scope:'Puncta, kanalikuli, sakus, dan duktus nasolakrimal menuju meatus inferior.'},
+  {id:'biometry-variation',title:'The Effect of Age, Accommodation and Refractive Error on the Adult Human Eye',author:'Richdale et al. · Optometry and Vision Science · 2016',url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC4692191/',scope:'Arah perubahan dimensi terkait usia. Preset dan koefisien morph pada atlas adalah ilustrasi, bukan model regresi penelitian.'},
   { id: 'gross', title: 'Gross Anatomy of the Eye', author: 'Webvision · NCBI Bookshelf', url: 'https://www.ncbi.nlm.nih.gov/books/NBK11534/', scope: 'Hubungan spasial, tunika, dan bilik mata.' },
   { id: 'neuro', title: 'Anatomy of the Eye', author: 'Neuroscience · NCBI Bookshelf', url: 'https://www.ncbi.nlm.nih.gov/books/NBK11120/', scope: 'Struktur optik, retina, dan saraf optik.' },
   { id: 'aqueous', title: 'Aqueous Humor Dynamics: A Review', author: 'Goel et al. · 2010', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3032230/', scope: 'Sekresi, sirkulasi, dan resistensi aliran aqueous.' },
@@ -26,6 +32,7 @@ export const sources = [
 ];
 
 export const structures: Structure[] = [
+  ...orbitalStructures,
   {id:'sclera',name:'Sklera',latin:'Sclera',group:'Dinding bola mata',color:'#c4d4dd',description:'Selubung fibrosa yang membentuk sebagian besar dinding luar bola mata.',function:'Mempertahankan bentuk globe dan menjadi tempat perlekatan otot ekstraokular.',relation:'Berlanjut sebagai kornea pada limbus; koroid terletak di sisi dalamnya.',clinical:'Skleritis dapat menimbulkan nyeri dalam yang berat. Sklera berbeda dari konjungtiva yang menutupinya.',fact:'Tunika fibrosa',sources:['gross']},
   {id:'choroid',name:'Koroid',latin:'Choroidea',group:'Dinding bola mata',color:'#b8654d',description:'Lapisan vaskular dan berpigmen di antara sklera dan retina.',function:'Mendukung kebutuhan metabolik retina luar, terutama fotoreseptor.',relation:'Di anterior, uvea berlanjut ke badan siliaris dan iris.',clinical:'Perubahan vaskular koroid dapat mengganggu retina luar dan penglihatan sentral.',fact:'Bagian posterior uvea',sources:['gross','neuro']},
   {id:'retina',name:'Retina',latin:'Retina',group:'Dinding bola mata',color:'#efa078',description:'Jaringan saraf berlapis yang melapisi permukaan dalam bagian posterior bola mata.',function:'Fotoreseptor mengubah cahaya menjadi sinyal saraf; sel ganglion meneruskannya ke otak.',relation:'Berakhir di ora serrata. Akson sel ganglion berkumpul pada diskus optikus.',clinical:'Ablasio retina memisahkan retina neurosensorik dari epitel pigmennya.',fact:'Awal transduksi visual',sources:['neuro']},

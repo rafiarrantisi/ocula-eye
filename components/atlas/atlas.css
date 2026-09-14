@@ -242,3 +242,42 @@ html.ocula-light .fold-thickness{color:#5b6b78}
 html.ocula-light details.structure-group>summary h3{color:#5b6b78}
 html.ocula-light details.structure-group>summary>span{color:#75828d}
 html.ocula-light details.structure-group>summary>svg{color:#3f6b58}
+
+/* Orbital exploration: compact disclosures inherit both existing themes. */
+.exploration-panel{margin:-2px 0 24px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.exploration-heading{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--mint);margin-bottom:14px}
+.exploration-heading .count-badge{margin-left:auto;font-size:10px;font-weight:500}
+.context-switch{display:flex;gap:4px;padding:4px;background:var(--secondary);border:1px solid var(--line);border-radius:7px}
+.context-switch button{flex:1;border-radius:4px;padding:8px 4px;font-size:14px;min-height:36px;color:var(--dim)}
+.context-switch button[aria-pressed=true]{background:var(--primary);color:var(--primary-foreground);font-weight:600}
+.exploration-caption{font-size:12px;line-height:1.6;color:var(--dim);margin:9px 0 13px}
+.exploration-fold>summary{gap:9px;font-size:14px;min-height:47px}
+.exploration-fold>summary>span{flex:1}
+.exploration-fold>summary>svg:first-child{color:var(--mint);flex:none}
+.exploration-panel .fold-body{padding-bottom:15px}
+.exploration-panel .fold-body .small-note{font-size:14px;color:var(--dim);line-height:1.75;margin-top:14px}
+.exploration-label{font-size:14px;display:block;margin:18px 0 8px;color:var(--ink)}
+.exploration-panel select,.structure-search{background:var(--card);border:1px solid var(--border);color:var(--ink);font:inherit;font-size:14px;padding:10px;width:100%;border-radius:5px;min-width:0}
+.exploration-panel select:focus-visible,.structure-search:focus-visible,.exploration-check input:focus-visible{outline:2px solid var(--ring);outline-offset:3px}
+.exploration-panel .range-control{margin:19px 0 21px}
+.exploration-panel .range-control>div:first-child{font-size:14px;gap:8px;align-items:flex-start}
+.exploration-panel .range-control output{white-space:nowrap;color:var(--mint)}
+.variation-kind{font-size:12px;line-height:1.6;margin-top:10px;border-left:2px solid var(--mint);padding:7px 10px;background:var(--accent);color:var(--accent-foreground)}
+.variation-kind.risk{border-left-color:#c79958}
+.exploration-check{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:14px;line-height:1.6;margin:10px 0;min-height:30px;color:var(--ink)}
+.exploration-check input{width:16px;height:16px;accent-color:var(--mint);flex:none;cursor:pointer}
+.exploration-check i{height:7px;width:7px;border-radius:50%;flex:none}
+.exploration-reset{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;border:1px solid var(--border);border-radius:5px;padding:10px;font-size:14px;margin-top:14px;color:var(--mint)}
+.exploration-reset:hover,.dissection-step button:hover{background:var(--accent)}
+.dissection-step{display:flex;gap:8px;margin:9px 0 14px}
+.dissection-step button{flex:1;font-size:12px;line-height:1.5;padding:8px;border:1px solid var(--border);border-radius:5px}
+.isolation-heading{display:flex;justify-content:space-between;align-items:center;gap:5px;margin:22px 0 10px;font-size:14px}
+.isolation-heading strong{font-weight:500}.isolation-heading output{font-size:12px;color:var(--mint);white-space:nowrap}
+.multi-structure-list{max-height:230px;overflow:auto;border-bottom:1px solid var(--line);padding:5px 1px}
+.multi-structure-list .exploration-check{margin:2px 0;padding:4px 0}
+.model-scope-note{padding:10px 12px;border:1px solid var(--line);border-radius:5px;font-size:12px;line-height:1.75;color:var(--dim);margin-bottom:20px}
+.exploration-panel .preset-row button[aria-pressed=true]{background:var(--accent);color:var(--accent-foreground);border-color:var(--mint)}
+.isolate-banner{max-width:90%;white-space:normal}.isolate-banner span{overflow-wrap:anywhere}
+.viewport:has(.isolate-banner) .exploded-note{top:220px}
+html.ocula-light .exploration-panel .context-switch{background:var(--secondary)}
+@media(max-width:700px){.exploration-panel .range-control{margin:23px 0}.exploration-fold>summary{min-height:50px}.dissection-step button{min-height:42px}.exploration-check{min-height:38px}}
