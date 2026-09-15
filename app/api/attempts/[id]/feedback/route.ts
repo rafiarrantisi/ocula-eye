@@ -3,6 +3,11 @@ import { resolveRepositories } from '../../../../../lib/server/repos.ts';
 import { toCaseTruth, toExpertView } from '../../../../../lib/server/truthMapping.ts';
 import { readPrivatePack } from '../../../../../lib/server/packRepository.ts';
 import { checkRateLimit } from '../../../../../lib/server/rateLimit.ts';
+import {
+  getAssignmentRevealState,
+  getAttemptAssignmentId,
+  resolveReveal,
+} from '../../../../../lib/server/assessmentReveal.ts';
 import { getSessionTokenFromCookie, verifySessionToken } from '../../../../../lib/server/sessions.ts';
 
 export const dynamic = 'force-dynamic';
@@ -92,6 +97,20 @@ export async function GET(
     if (!existingSession) {
       await repos.createSession(sessionId, new Date(expiresAtSec * 1000));
     }
+    // PART06: attempts linked to a manual/scheduled-reveal assignment stay
+    // locked until revealed (manual) or due (scheduled). Checked BEFORE the
+    // service so no answer bytes are produced for locked attempts.
+    const linkedAssignment = await getAttemptAssignmentId(repos, id);
+    if (linkedAssignment) {
+      const state = await getAssignmentRevealState(repos, linkedAssignment);
+      if (state && !resolveReveal(state, Date.now()).released) {
+        return json(
+          403,
+          { error: 'feedback_not_released', message: 'Answers release after the assignment reveal.' },
+          { 'Cache-Control': 'no-store' },
+        );
+      }
+    }
     const services = createServices(repos, {
       truthProvider: async (relId: string, cId: string) => {
         const pack = (await readPrivatePack(relId)) as { cases?: unknown };
@@ -108,7 +127,7 @@ export async function GET(
       const found = Array.isArray(pack?.cases) ? pack.cases.find((c) => (c as { caseId?: unknown })?.caseId === attempt.caseId) : undefined;
       expert = toExpertView(found);
     }
-    return json(200, { ...feedback, expert });
+    return json(200, { ...feedback, expert }, { 'Cache-Control': 'no-store' });
   } catch (err) {
     return toErrorResponse(err);
   }

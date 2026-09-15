@@ -52,6 +52,21 @@ export interface ScoreRow {
   result: unknown;
 }
 
+// PART06 pilot gates (migration 0004). All OPTIONAL so pre-existing fakes and
+// implementations keep compiling and behave as "no quarantine / unlinked".
+export interface QuarantineRow {
+  releaseId: string;
+  reason: string;
+  notice: string;
+  createdAt: Date;
+}
+
+export interface AssignmentRevealState {
+  revealPolicy: string;
+  dueAt: Date | null;
+  revealedAt: Date | null;
+}
+
 /** Transaction-scoped view used for the atomic submit path. The postgres
  * implementation takes a SELECT ... FOR UPDATE row lock before invoking fn. */
 export interface AttemptTx {
@@ -89,6 +104,11 @@ export interface Repositories {
   getScore(attemptId: string): Promise<ScoreRow | null>;
   saveScore(attemptId: string, result: unknown): Promise<void>;
   withAttemptLock<T>(attemptId: string, fn: (tx: AttemptTx) => Promise<T>): Promise<T>;
+  // PART06 additions (all optional; absent = gates open as before).
+  getReleaseQuarantine?(releaseId: string): Promise<QuarantineRow | null>;
+  setAttemptAssignmentId?(attemptId: string, assignmentId: string): Promise<void>;
+  getAttemptAssignmentId?(attemptId: string): Promise<string | null>;
+  getAssignmentRevealState?(assignmentId: string): Promise<AssignmentRevealState | null>;
 }
 
 type Db = PostgresJsDatabase<typeof schema>;
@@ -281,6 +301,48 @@ export class PostgresRepositories implements Repositories {
       );
       return fn(txView(tx));
     });
+  }
+
+  // PART06 pilot gates. Quarantine reads tolerate a database that predates
+  // migration 0004 (undefined_table => no quarantine, not a crash); every
+  // other SQL error still propagates. AttemptRow is deliberately NOT extended
+  // with assignmentId so existing row fakes keep compiling.
+  async getReleaseQuarantine(releaseId: string): Promise<QuarantineRow | null> {
+    let rows: { release_id: string; reason: string; notice: string; created_at: Date }[];
+    try {
+      rows = await this.sql<
+        { release_id: string; reason: string; notice: string; created_at: Date }[]
+      >`SELECT "release_id", "reason", "notice", "created_at" FROM "release_quarantine" WHERE "release_id" = ${releaseId}`;
+    } catch (err) {
+      if (err && typeof err === 'object' && (err as { code?: string }).code === '42P01') return null;
+      throw err;
+    }
+    if (rows.length === 0) return null;
+    return { releaseId: rows[0].release_id, reason: rows[0].reason, notice: rows[0].notice, createdAt: rows[0].created_at };
+  }
+
+  async setAttemptAssignmentId(attemptId: string, assignmentId: string): Promise<void> {
+    await this.db
+      .update(schema.imagingAttempts)
+      .set({ assignmentId })
+      .where(eq(schema.imagingAttempts.id, attemptId));
+  }
+
+  async getAttemptAssignmentId(attemptId: string): Promise<string | null> {
+    const rows = await this.db
+      .select({ assignmentId: schema.imagingAttempts.assignmentId })
+      .from(schema.imagingAttempts)
+      .where(eq(schema.imagingAttempts.id, attemptId));
+    if (rows.length === 0) return null;
+    return rows[0].assignmentId;
+  }
+
+  async getAssignmentRevealState(assignmentId: string): Promise<AssignmentRevealState | null> {
+    const rows = await this.sql<
+      { reveal_policy: string; due_at: Date | null; revealed_at: Date | null }[]
+    >`SELECT "reveal_policy", "due_at", "revealed_at" FROM "assignments" WHERE "id" = ${assignmentId}`;
+    if (rows.length === 0) return null;
+    return { revealPolicy: rows[0].reveal_policy, dueAt: rows[0].due_at, revealedAt: rows[0].revealed_at };
   }
 }
 

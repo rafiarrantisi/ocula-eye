@@ -77,6 +77,8 @@ export const assignments = pgTable('assignments', {
   openAt: timestamp('open_at', { withTimezone: true, mode: 'date' }).notNull(),
   dueAt: timestamp('due_at', { withTimezone: true, mode: 'date' }),
   revealPolicy: text('reveal_policy').notNull().default('manual'),
+  // PART06: manual reveal timestamp (migration 0004). NULL = unrevealed.
+  revealedAt: timestamp('revealed_at', { withTimezone: true, mode: 'date' }),
   releaseVersion: text('release_version'),
   releaseSnapshot: jsonb('release_snapshot'),
   createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),

@@ -16,7 +16,8 @@
     "test:domain": "vitest run",
     "content:validate": "node scripts/content/validate.mjs",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "node scripts/db/migrate.mjs"
+    "db:migrate": "node scripts/db/migrate.mjs",
+    "pilot:validate": "node scripts/pilot/validate.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

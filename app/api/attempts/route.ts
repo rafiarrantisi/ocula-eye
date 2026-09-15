@@ -1,5 +1,6 @@
 import { createServices, ServiceError } from '../../../lib/server/attemptService.ts';
 import { resolveRepositories } from '../../../lib/server/repos.ts';
+import { getQuarantine } from '../../../lib/server/quarantine.ts';
 import { toCaseTruth } from '../../../lib/server/truthMapping.ts';
 import { readPrivatePack, readPublicManifest } from '../../../lib/server/packRepository.ts';
 import { checkRateLimit } from '../../../lib/server/rateLimit.ts';
@@ -121,6 +122,12 @@ export async function POST(req: Request): Promise<Response> {
       const manifest = await readPublicManifest(releaseId);
       await repos.upsertRelease(releaseId, manifest);
     }
+    // PART06: quarantined releases refuse NEW attempts with the stored
+    // correction notice; history (existing attempts, reports) is untouched.
+    const hold = await getQuarantine(repos, releaseId);
+    if (hold) {
+      return json(403, { error: 'quarantined', message: hold.notice, reason: hold.reason });
+    }
     const services = createServices(repos, {
       truthProvider: async (relId: string, cId: string) => {
         const pack = (await readPrivatePack(relId)) as { cases?: unknown };
@@ -129,6 +136,12 @@ export async function POST(req: Request): Promise<Response> {
       },
     });
     const created = await services.createAttempt({ sessionId, releaseId, caseId, mode, idempotencyKey });
+    // PART06 advisory assignment link (route-level so the submit service is
+    // untouched). Enforcement can only ever delay feedback, never leak it.
+    const assignmentId = body['assignmentId'];
+    if (typeof assignmentId === 'string' && assignmentId.length > 0 && assignmentId.length <= 128) {
+      await repos.setAttemptAssignmentId?.(created.attemptId, assignmentId);
+    }
     return json(201, { attemptId: created.attemptId, revision: created.revision, status: created.status });
   } catch (err) {
     return toErrorResponse(err);

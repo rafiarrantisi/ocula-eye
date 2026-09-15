@@ -17,6 +17,13 @@ interface Report {
   [key: string]: unknown;
 }
 
+interface Reveal {
+  assignmentId: string;
+  revealPolicy: string;
+  dueAt: string | null;
+  revealedAt: string | null;
+}
+
 async function api(path: string, init?: RequestInit): Promise<{ status: number; body: unknown }> {
   const res = await fetch(path, {
     ...init,
@@ -45,6 +52,9 @@ export default function CohortDetail({ cohortId }: { cohortId: string }) {
   const [releaseId, setReleaseId] = useState('demo-synthetic-0.1.0');
   const [assignMsg, setAssignMsg] = useState('');
   const [report, setReport] = useState<Report | null>(null);
+  const [reportId, setReportId] = useState('');
+  const [reveal, setReveal] = useState<Reveal | null>(null);
+  const [revealMsg, setRevealMsg] = useState('');
   const [error, setError] = useState('');
 
   const runPreview = useCallback(async () => {
@@ -85,10 +95,24 @@ export default function CohortDetail({ cohortId }: { cohortId: string }) {
   }
 
   const loadReport = useCallback(async (assignmentId: string) => {
+    setReportId(assignmentId);
     const res = await api(`/api/faculty/assignments/${assignmentId}/report`);
     if (res.status === 200) setReport(res.body as Report);
     else setError('Laporan gagal dimuat.');
+    const rev = await api(`/api/faculty/assignments/${assignmentId}/reveal`);
+    if (rev.status === 200) setReveal(rev.body as Reveal);
+    else setReveal(null);
   }, []);
+
+  async function revealAnswers() {
+    if (!reportId) return;
+    setRevealMsg('');
+    const res = await api(`/api/faculty/assignments/${reportId}/reveal`, { method: 'POST' });
+    if (res.status === 200) {
+      setRevealMsg('Jawaban dibuka untuk penugasan ini.');
+      loadReport(reportId);
+    } else setRevealMsg('Gagal membuka jawaban.');
+  }
 
   useEffect(() => {
     const last = window.localStorage.getItem('ocula-last-assignment');
@@ -144,6 +168,15 @@ export default function CohortDetail({ cohortId }: { cohortId: string }) {
       </form>
       {report && (
         <pre className="lab-report">{JSON.stringify(report.counts ?? report, null, 2)}</pre>
+      )}
+      {reveal && (
+        <div className="lab-report">
+          <p>Kebijakan buka: {reveal.revealPolicy} · Status: {reveal.revealedAt ? `dibuka ${reveal.revealedAt}` : 'belum dibuka'}</p>
+          {!reveal.revealedAt && (reveal.revealPolicy === 'manual' || reveal.revealPolicy === 'scheduled') && (
+            <button type="button" className="lab-button" onClick={revealAnswers}>Buka jawaban sekarang</button>
+          )}
+          {revealMsg && <p role="status">{revealMsg}</p>}
+        </div>
       )}
     </main>
   );

@@ -39,6 +39,9 @@ export const imagingAttempts = pgTable('imaging_attempts', {
   createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
   submittedAt: timestamp('submitted_at', { withTimezone: true, mode: 'date' }),
   parentAttemptId: text('parent_attempt_id'),
+  // PART06: advisory link to the faculty assignment the attempt launched from
+  // (migration 0004). Deliberately no FK: attempts outlive assignment edits.
+  assignmentId: text('assignment_id'),
 });
 
 export const imagingAttemptDrafts = pgTable('imaging_attempt_drafts', {
@@ -94,6 +97,15 @@ export const imagingAttemptsRelations = relations(imagingAttempts, ({ one }) => 
     references: [imagingScores.attemptId],
   }),
 }));
+
+// PART06 pilot gates. Additive only; every export above is unchanged.
+// Matches db/migrations/0004_pilot.sql.
+export const releaseQuarantine = pgTable('release_quarantine', {
+  releaseId: text('release_id').primaryKey(),
+  reason: text('reason').notNull(),
+  notice: text('notice').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
+});
 
 // PART04 medical-education bridge slice. Additive only; every export above is
 // unchanged. Matches db/migrations/0002_bridge.sql.

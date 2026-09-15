@@ -47,11 +47,14 @@ function reviveInvitation(r: FacultyDb['invitations'][string]): InvitationRow {
 }
 
 function reviveAssignment(r: FacultyDb['assignments'][string]): AssignmentRow {
+  const base = r as FacultyDb['assignments'][string] & { revealedAt?: string | null };
   return {
     ...r,
     openAt: new Date(r.openAt),
     dueAt: r.dueAt ? new Date(r.dueAt) : null,
     createdAt: new Date(r.createdAt),
+    // PART06 manual reveal (absent in rows written before migration 0004).
+    revealedAt: base.revealedAt ? new Date(base.revealedAt) : null,
   };
 }
 
@@ -179,6 +182,14 @@ export function createDemoFacultyRepos(): FacultyRepositories & AssignmentServic
       r.releaseSnapshot = input.releaseSnapshot;
       save(db);
       return reviveAssignment(r);
+    },
+    // PART06 manual reveal (idempotent re-stamp).
+    setAssignmentRevealed: async (id, at) => {
+      const db = load();
+      const r = db.assignments[id];
+      if (!r) return;
+      (r as FacultyDb['assignments'][string] & { revealedAt?: string | null }).revealedAt = at.toISOString();
+      save(db);
     },
     getReleaseManifest: async (releaseId): Promise<ReleaseManifestView | null> => {
       if (!releaseId.startsWith('demo-synthetic-')) return null;

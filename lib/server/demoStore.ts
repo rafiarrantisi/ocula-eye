@@ -18,7 +18,10 @@ interface DemoDb {
     id: string; sessionId: string; releaseId: string; caseId: string;
     status: AttemptRow['status']; idempotencyKey: string | null; revision: number;
     createdAt: string; submittedAt: string | null;
+    // PART06 advisory assignment link (absent in rows written before).
+    assignmentId?: string | null;
   }>;
+  // PART06 release quarantine (institute-level holds; history preserved).
   drafts: Record<string, { attemptId: string; payload: unknown; revision: number }>;
   responses: Record<string, { attemptId: string; payload: unknown; error: unknown }>;
   scores: Record<string, { attemptId: string; result: unknown }>;
@@ -31,6 +34,7 @@ interface DemoDb {
     id: string; sessionId: string; attemptId: string | null; releaseId: string | null;
     event: string; conceptId: string | null; payload: unknown; createdAt: string;
   }>;
+  quarantine: Record<string, { releaseId: string; reason: string; notice: string; createdAt: string }>;
   faculty: {
     institutions: Record<string, { id: string; name: string; createdAt: string }>;
     users: Record<string, { id: string; authSubject: string; displayName: string; createdAt: string }>;
@@ -51,7 +55,7 @@ export type { DemoDb };
 function emptyDb(): DemoDb {
   return {
     sessions: {}, releases: {}, attempts: {}, drafts: {}, responses: {}, scores: {},
-    bridgeProgress: {}, learningEvents: {},
+    bridgeProgress: {}, learningEvents: {}, quarantine: {},
     faculty: { institutions: {}, users: {}, memberships: {}, cohorts: {}, members: {}, invitations: {}, assignments: {} },
   };
 }
@@ -206,7 +210,47 @@ export function createDemoRepositories(): Repositories {
       const db = readDemoDb();
       return fn(txView(db));
     },
+    // PART06 pilot gates (demo twins of the postgres implementations).
+    getReleaseQuarantine: async (releaseId) => {
+      const q = readDemoDb().quarantine[releaseId];
+      return q ? { releaseId: q.releaseId, reason: q.reason, notice: q.notice, createdAt: new Date(q.createdAt) } : null;
+    },
+    setAttemptAssignmentId: async (attemptId, assignmentId) => {
+      const db = readDemoDb();
+      const a = db.attempts[attemptId];
+      if (!a) return;
+      a.assignmentId = assignmentId;
+      writeDemoDb(db);
+    },
+    getAttemptAssignmentId: async (attemptId) => {
+      const a = readDemoDb().attempts[attemptId];
+      return a?.assignmentId ?? null;
+    },
+    getAssignmentRevealState: async (assignmentId) => {
+      const r = readDemoDb().faculty.assignments[assignmentId] as
+        | { revealPolicy: string; dueAt: string | null; revealedAt?: string | null }
+        | undefined;
+      if (!r) return null;
+      return {
+        revealPolicy: r.revealPolicy,
+        dueAt: r.dueAt ? new Date(r.dueAt) : null,
+        revealedAt: r.revealedAt ? new Date(r.revealedAt) : null,
+      };
+    },
   };
+}
+
+/** PART06 demo quarantine helpers (used by the pilot CLI and tests). */
+export function setDemoQuarantine(releaseId: string, reason: string, notice: string): void {
+  const db = readDemoDb();
+  db.quarantine[releaseId] = { releaseId, reason, notice, createdAt: new Date().toISOString() };
+  writeDemoDb(db);
+}
+
+export function clearDemoQuarantine(releaseId: string): void {
+  const db = readDemoDb();
+  delete db.quarantine[releaseId];
+  writeDemoDb(db);
 }
 
 /** Bridge tables on the same demo file. Synthetic demo only, like the rest

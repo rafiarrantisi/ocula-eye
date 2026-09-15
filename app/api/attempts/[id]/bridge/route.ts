@@ -169,12 +169,13 @@ export async function GET(
     });
     const result = await services.getBridge({ sessionId, attemptId: id });
     if (!result.available) {
-      return json(200, { available: false, reason: result.reason });
+      return json(200, { available: false, reason: result.reason }, { 'Cache-Control': 'no-store' });
     }
     const [question, mechanisms] = await Promise.all([
       questionForRule(result.rule.id),
       mechanismTexts(result.rule.mechanismIds),
     ]);
+    // PART06: per-attempt responses are never cached.
     return json(200, {
       available: true,
       ruleId: result.rule.id,
@@ -184,7 +185,7 @@ export async function GET(
       question,
       followup: result.followup,
       resume: result.resume,
-    });
+    }, { 'Cache-Control': 'no-store' });
   } catch (err) {
     return toErrorResponse(err);
   }

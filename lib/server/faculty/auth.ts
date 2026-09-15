@@ -90,6 +90,9 @@ export interface AssignmentRow {
   releaseVersion: string | null;
   releaseSnapshot: unknown;
   createdAt: Date;
+  // PART06 manual-reveal timestamp. Optional so older fakes keep compiling;
+  // absent/undefined means unrevealed.
+  revealedAt?: Date | null;
 }
 
 export interface AttemptOutcomeRow {
@@ -188,6 +191,8 @@ export interface FacultyRepositories extends FacultyAuthRepos {
   getReleaseManifest(releaseId: string): Promise<ReleaseManifestView | null>;
   countAttemptsForRelease(releaseId: string): Promise<number>;
   listAttemptOutcomes(releaseId: string): Promise<AttemptOutcomeRow[]>;
+  // PART06 manual reveal (optional; demo + postgres implement it).
+  setAssignmentRevealed?(id: string, at: Date): Promise<void>;
 }
 
 /** Faculty gate. 401 when the subject has no user row (unknown subject);
@@ -280,6 +285,8 @@ function toAssignment(r: typeof facultySchema.assignments.$inferSelect): Assignm
     releaseVersion: r.releaseVersion,
     releaseSnapshot: r.releaseSnapshot,
     createdAt: r.createdAt,
+    // PART06: manual reveal timestamp (migration 0004 column).
+    revealedAt: r.revealedAt,
   };
 }
 
@@ -526,6 +533,15 @@ export class PostgresFacultyRepositories implements FacultyRepositories {
       .returning();
     if (rows.length === 0) return null;
     return toAssignment(rows[0]);
+  }
+
+  // PART06 manual reveal: stamps revealed_at so linked assessment attempts
+  // unlock. Idempotent (re-reveal just re-stamps).
+  async setAssignmentRevealed(id: string, at: Date): Promise<void> {
+    await this.db
+      .update(facultySchema.assignments)
+      .set({ revealedAt: at })
+      .where(eq(facultySchema.assignments.id, id));
   }
 
   async getReleaseManifest(releaseId: string): Promise<ReleaseManifestView | null> {
