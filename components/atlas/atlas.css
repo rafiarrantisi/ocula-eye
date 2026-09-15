@@ -282,3 +282,14 @@ html.ocula-light details.structure-group>summary>svg{color:#3f6b58}
 html.ocula-light .exploration-panel .context-switch{background:var(--secondary)}
 @media(max-width:700px){.exploration-panel .range-control{margin:23px 0}.exploration-fold>summary{min-height:50px}.dissection-step button{min-height:42px}.exploration-check{min-height:38px}}
 .trace-list{margin:10px 0 0;padding-left:20px;display:grid;gap:8px}.trace-list li{font-size:13px;line-height:1.7;color:#b2c1cc}.trace-list strong{color:#d7e5da;font-weight:600}.trace-list span{display:block;font-size:12px;color:#8fa5b3;font-variant-numeric:tabular-nums}html.ocula-light .trace-list li{color:#33414d}html.ocula-light .trace-list strong{color:#12372a}html.ocula-light .trace-list span{color:#5b6b78}
+.mech-question{margin-top:16px}
+.mech-question>p:first-child{font-size:14px;color:#b2c1cc;line-height:1.8}
+.mech-question>button{display:flex;gap:9px;align-items:center;text-align:left;font-size:13px;line-height:1.6;padding:10px;margin-top:7px;border:1px solid #34444e;border-radius:4px;width:100%;color:#93a99a;background:none;cursor:pointer}
+.mech-question>button>span{color:#bdcbd5}
+.mech-question>button.correct{background:#244c37;border-color:#639e7e}
+.mech-question>button.incorrect{background:#4b3330;border-color:#ac7870}
+html.ocula-light .mech-question>p:first-child{color:#33414d}
+html.ocula-light .mech-question>button{border:1px solid #c3cfd5;color:#2c5a41;background:#fff}
+html.ocula-light .mech-question>button>span{color:#43565f}
+html.ocula-light .mech-question>button.correct{background:#dcefe4;border-color:#4c8a68}
+html.ocula-light .mech-question>button.incorrect{background:#f7ddd8;border-color:#b26a5e}

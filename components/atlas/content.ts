@@ -53,6 +53,7 @@ export const modules: {id:ModuleId; number:string; title:string; subtitle:string
   {id:'anatomy',number:'01',title:'Anatomi mata',subtitle:'Struktur & hubungan spasial',heading:'Kenali setiap lapisan.'},
   {id:'aqueous',number:'02',title:'Aqueous humor',subtitle:'Produksi, aliran & drainase',heading:'Ikuti perjalanan aqueous.'},
   {id:'cataract',number:'03',title:'Katarak',subtitle:'Patogenesis & temuan klinis',heading:'Dari lensa jernih ke opasitas.'},
+  {id:'mechanism',number:'04',title:'Mekanisme DR',subtitle:'Sawar, kebocoran & iskemia',heading:'Dari sawar ke temuan.'},
 ];
 
 export const flowSteps = [

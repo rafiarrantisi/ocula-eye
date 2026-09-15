@@ -1,4 +1,6 @@
-export type ModuleId = 'anatomy' | 'aqueous' | 'cataract';
+import type { DRScenario } from '../../lib/domain/simulation/dr.ts';
+
+export type ModuleId = 'anatomy' | 'aqueous' | 'cataract' | 'mechanism';
 export type ViewMode = 'cutaway' | 'intact' | 'exploded';
 export type CataractType = 'nuclear' | 'cortical' | 'psc';
 export type GlobeStructureId = 'sclera' | 'choroid' | 'retina' | 'cornea' | 'iris' | 'lens' | 'ciliary' | 'zonules' | 'vitreous' | 'anterior' | 'posterior' | 'trabecular' | 'schlemm' | 'optic';
@@ -20,4 +22,5 @@ export interface SceneState {
   detail: DetailView; detailSub: string | null; accommodation: number; lighting: 'day' | 'night';
   context:'globe'|'orbit'; biometry:Biometry; section:SectionSettings;
   multiIsolated:StructureId[]; peel:number; explosionGap:number; connectors:boolean;
+  drScenario:DRScenario; drFocus:string[];
 }

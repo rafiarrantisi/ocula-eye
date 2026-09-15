@@ -9,6 +9,9 @@ import type {SceneState,StructureId} from './types';
 import {buildMacro,positionParts,worldAnchor,buildConnectors} from './macroModel';
 import {sectionPlane,isolationIds} from './exploration';
 import {buildSectionCaps} from './sectionGeometry';
+import {applyDrOverlay,advanceOverlay} from './retinaMechanismAdapter.ts';
+import {selectScenario} from '../../lib/domain/simulation/dr.ts';
+import type {RetinaOverlayBuild} from './retinaVascularOverlay.ts';
 
 export interface FlowParams {production:number;facility:number;uveoscleral:number;}
 
@@ -110,6 +113,11 @@ export default function EyeScene({state,onSelect,onDetailSelect,flow}:{state:Sce
     let focusAnim:null|{t0:number;dur:number;fromT:THREE.Vector3;toT:THREE.Vector3;fromP:THREE.Vector3;toP:THREE.Vector3}=null;
     let prevFocusKey:string|null=null;
     let prevWholeKey:string|null=null;
+    let prevDrKey:string|null=null;
+    let drOverlay:RetinaOverlayBuild|null=null;
+    let drLoading:Promise<void>|null=null;
+    const reducedMotion=typeof window!=='undefined'&&typeof window.matchMedia==='function'&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function applyCurrentDr(){const s=current.current;if(!drOverlay||s.module!=='mechanism'||s.detail)return;const r=selectScenario(s.drScenario);if(r.ok)applyDrOverlay(drOverlay.parts,drOverlay.systems,r.state);}
     const vec=new THREE.Vector3();
     const resize=()=>{const w=el.clientWidth,h=el.clientHeight;if(!w||!h)return;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();prev=null;};
     const ro=new ResizeObserver(resize);ro.observe(el);resize();
@@ -197,7 +205,20 @@ export default function EyeScene({state,onSelect,onDetailSelect,flow}:{state:Sce
           else if(s.detail==='iris-ciliary')refreshIris(microAcc);
         }
         if(geometryKey(s)!==modelKey){scene.remove(eye.root);disposeObject(eye.root);eye=createEye(s);scene.add(eye.root);modelKey=geometryKey(s);}
-        eye.root.visible=!s.detail;positionParts(eye,s);updateSection(s,now);
+        const inMech=s.module==='mechanism'&&!s.detail;
+        eye.root.visible=!s.detail&&!inMech;positionParts(eye,s);updateSection(s,now);
+        if(drOverlay)drOverlay.root.visible=inMech;
+        if(inMech&&!drOverlay&&!drLoading){
+          drLoading=import('./retinaVascularOverlay.ts').then(mod=>{
+            const b=mod.buildRetinaOverlay();
+            if(disposed){disposeObject(b.root);return;}
+            drOverlay=b;scene.add(b.root);
+            b.root.visible=current.current.module==='mechanism'&&!current.current.detail;
+            applyCurrentDr();
+          }).catch(()=>{/* lesson DOM tetap berfungsi tanpa overlay */}).finally(()=>{drLoading=null;});
+        }
+        const drKey=inMech?s.drScenario:null;
+        if(drKey!==prevDrKey){prevDrKey=drKey;applyCurrentDr();}
         const focusKey=s.detail?s.detail+'|'+s.detailSub:null;
         const focusChanged=focusKey!==prevFocusKey;
         if(focusChanged){prevFocusKey=focusKey;focusAnim=null;if(focusKey&&s.detailSub)startFocusAnim(s);else if(s.detail)startDetailOverviewAnim(s);}
@@ -215,6 +236,10 @@ export default function EyeScene({state,onSelect,onDetailSelect,flow}:{state:Sce
             const p=detailPose(s);
             controls.target.copy(p.target);
             camera.position.copy(p.target).addScaledVector(p.dir,p.d);controls.update();
+          } else if(s.module==='mechanism'){
+          controls.target.set(0,0,0);
+          const dir=presetDir(s.angle);
+          camera.position.copy(controls.target).addScaledVector(dir,3.6);controls.update();focusAnim=null;
           } else {
           const isolated=isolationIds(s);
           const bounds=new THREE.Box3();
@@ -233,7 +258,7 @@ export default function EyeScene({state,onSelect,onDetailSelect,flow}:{state:Sce
         // Ganti preset (Oblik/Anterior/Gonio/Lateral) saat fokus: bingkai ulang
         // di sekitar lapis/struktur yang sama, bukan lompat ke overview.
         if(s.detail&&prev&&!focusChanged&&s.angle!==prev.angle)startFocusAnim(s);
-        if(!s.detail&&!s.isolated&&prev&&s.angle!==prev.angle&&wholeKey&&wholeKey===prevWholeKey)startWholeFocusAnim(s,presetDir(s.angle));
+        if(!s.detail&&!s.isolated&&prev&&s.angle!==prev.angle&&s.module!=='mechanism'&&wholeKey&&wholeKey===prevWholeKey)startWholeFocusAnim(s,presetDir(s.angle));
         if(prev&&s.zoom!==prev.zoom){focusAnim=null;const delta=camera.position.clone().sub(controls.target);delta.multiplyScalar(Math.pow(.84,s.zoom-prev.zoom));delta.clampLength(controls.minDistance,controls.maxDistance);camera.position.copy(controls.target).add(delta);}
         for(const id of Object.keys(eye.parts) as StructureId[]){
           const part=eye.parts[id];
@@ -319,6 +344,7 @@ export default function EyeScene({state,onSelect,onDetailSelect,flow}:{state:Sce
       const convVis=inAq&&!s.isolated&&s.view!=='exploded';
       convGroup.visible=convVis;
       for(const c of convParticles){c.mesh.visible=convVis;c.mesh.position.copy(c.loop.getPointAt(c.phase));}
+      if(drOverlay&&drOverlay.root.visible&&!reducedMotion&&!document.hidden)advanceOverlay(drOverlay.systems,dt);
       // Halo silau malam: intensitas ∝ straylight tipe × severity.
       const night=s.lighting==='night';
       glare.visible=!s.detail&&s.module==='cataract'&&night&&!s.isolated&&s.view!=='exploded';
@@ -334,7 +360,7 @@ export default function EyeScene({state,onSelect,onDetailSelect,flow}:{state:Sce
       const basic:StructureId[]=s.module==='aqueous'?['ciliary','posterior','anterior','trabecular','schlemm']:s.module==='cataract'?['lens','iris','retina']:['sclera','retina','cornea','lens','optic'];
       if(s.context==='orbit')basic.splice(0,basic.length,'rectus-superior','rectus-lateral','lacrimal-gland','nasolacrimal','optic');if(isolationIds(s).length)basic.splice(0,basic.length,...isolationIds(s));if(!basic.includes(s.selected))basic.push(s.selected);
       labels.current?.querySelectorAll<HTMLButtonElement>('[data-structure]').forEach(button=>{
-        const id=button.dataset.structure as StructureId;const part=eye.parts[id];const anchor=worldAnchor(id,s);const clipped=cutting&&clip.distanceToPoint(anchor)<0;if(clipped&&cappedIds.has(id))clip.projectPoint(anchor,anchor);const visible=!s.detail&&s.labels&&basic.includes(id)&&part.visible&&(!clipped||cappedIds.has(id));
+        const id=button.dataset.structure as StructureId;const part=eye.parts[id];const anchor=worldAnchor(id,s);const clipped=cutting&&clip.distanceToPoint(anchor)<0;if(clipped&&cappedIds.has(id))clip.projectPoint(anchor,anchor);const visible=!s.detail&&s.module!=='mechanism'&&s.labels&&basic.includes(id)&&part.visible&&(!clipped||cappedIds.has(id));
         button.style.display=visible?'block':'none';if(!visible)return;
         vec.copy(anchor);vec.project(camera);
         const x=(vec.x*.5+.5)*el.clientWidth,y=(-vec.y*.5+.5)*el.clientHeight;
@@ -355,7 +381,7 @@ export default function EyeScene({state,onSelect,onDetailSelect,flow}:{state:Sce
       if(!document.hidden)renderer.render(scene,camera);raf=requestAnimationFrame(frame);
     }
     raf=requestAnimationFrame(frame);setReady(true);
-    return()=>{disposed=true;cancelAnimationFrame(raf);ro.disconnect();controls.dispose();disposeObject(eye.root);disposeObject(caps);disposeObject(connectors);disposeObject(planeHelper);disposeObject(corneaDetail.root);disposeObject(angleDetail.root);disposeObject(lensDetail.root);disposeObject(irisCiliaryDetail.root);disposeObject(retinaDetail.root);disposeObject(onhDetail.root);disposeObject(flows);disposeObject(convGroup);disposeObject(rays);disposeObject(glare);renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointerup',pointerUp);renderer.domElement.removeEventListener('pointercancel',pointerCancel);renderer.domElement.removeEventListener('keydown',keydown);renderer.domElement.removeEventListener('webglcontextlost',contextLost);renderer.dispose();renderer.domElement.remove();};
+    return()=>{disposed=true;cancelAnimationFrame(raf);ro.disconnect();controls.dispose();disposeObject(eye.root);if(drOverlay)disposeObject(drOverlay.root);disposeObject(caps);disposeObject(connectors);disposeObject(planeHelper);disposeObject(corneaDetail.root);disposeObject(angleDetail.root);disposeObject(lensDetail.root);disposeObject(irisCiliaryDetail.root);disposeObject(retinaDetail.root);disposeObject(onhDetail.root);disposeObject(flows);disposeObject(convGroup);disposeObject(rays);disposeObject(glare);renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointerup',pointerUp);renderer.domElement.removeEventListener('pointercancel',pointerCancel);renderer.domElement.removeEventListener('keydown',keydown);renderer.domElement.removeEventListener('webglcontextlost',contextLost);renderer.dispose();renderer.domElement.remove();};
   },[]);
   return <div className="eye-scene" ref={host}>
     {!ready&&!error&&<div className="scene-loading"><span className="loader"/>Menyiapkan model 3D…</div>}
