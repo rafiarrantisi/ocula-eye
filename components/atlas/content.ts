@@ -69,8 +69,11 @@ export const cataracts: Record<CataractType,{name:string;location:string;mechani
   psc:{name:'Subkapsular posterior',location:'Di depan kapsul posterior',mechanism:'Opasitas granular terbentuk pada korteks posterior, dekat aksis visual dan tepat di anterior kapsul posterior.',findings:['Plak atau granula pada bagian posterior lensa','Silau dan kesulitan membaca','Dapat lebih mengganggu saat pupil mengecil'],pearl:'Lokasinya dekat aksis visual: opasitas yang kecil dapat menimbulkan keluhan yang bermakna.'},
 };
 
+import { evaluateAqueous } from '../../lib/domain/simulation/aqueous.ts';
+
 export function illustrativeIOP(production:number,facility:number,uveoscleral:number,episcleral=9){
-  return (production-uveoscleral)/facility+episcleral;
+  const r=evaluateAqueous({F:production,C:facility,U:uveoscleral,Pv:episcleral});
+  return r.ok?r.state.IOP:NaN;
 }
 
 // Neraca aliran keadaan tunak (Goldmann termodifikasi, ilustratif):
@@ -83,9 +86,9 @@ export function applyLighting(production:number,uveoscleral:number,lighting:'day
     : {production,uveoscleral};
 }
 export function aqueousBalance(production:number,facility:number,uveoscleral:number,episcleral=9){
-  const qconv=Math.max(0,production-uveoscleral),quv=uveoscleral;
-  const total=qconv+quv;
-  return {iop:illustrativeIOP(production,facility,uveoscleral,episcleral),qconv,quv,shareConv:total>0?qconv/total:0};
+  const r=evaluateAqueous({F:production,C:facility,U:uveoscleral,Pv:episcleral});
+  if(!r.ok)return {iop:NaN,qconv:0,quv:uveoscleral,shareConv:0};
+  return {iop:r.state.IOP,qconv:r.state.qConv,quv:r.state.qU,shareConv:r.state.shareConv};
 }
 
 // Straylight ilustratif per tipe (Labuz: kortikal +1,05 / nuklear +1,36 /

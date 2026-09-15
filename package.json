@@ -12,6 +12,9 @@
     "build:static": "node scripts/run-framework.mjs build --prerender-all && node scripts/collect-static.mjs",
     "start": "node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js dev --config dist/server/wrangler.json --local --persist-to .wrangler/state --ip 127.0.0.1 --inspector-port 0",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "typecheck": "tsc --noEmit",
+    "test:domain": "vitest run tests/domain",
+    "content:validate": "node scripts/content/validate.mjs",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
@@ -60,6 +63,7 @@
     "typescript": "5.9.3",
     "vinext": "1.0.0-beta.5",
     "vite": "8.0.13",
+    "vitest": "3.2.4",
     "wrangler": "4.92.0"
   },
   "type": "module"

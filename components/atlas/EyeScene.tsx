@@ -3,7 +3,8 @@ import {useEffect,useRef,useState} from 'react';
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {buildEye,anchors,explosion,disposeObject,flowPaths,buildCorneaSection,buildAngleWedge,buildLensSection,buildIrisCiliarySection,buildRetinaSection,buildONHSection,convectionLoops,microAnchors} from './geometry';
-import {structures,corneaLayers,angleStructures,lensLayers,irisCiliaryStructures,retinaLayers,onhStructures,aqueousBalance,SCATTER_K} from './content';
+import {structures,corneaLayers,angleStructures,lensLayers,irisCiliaryStructures,retinaLayers,onhStructures,SCATTER_K} from './content';
+import {sceneFlowSpeeds} from './simulationAdapter';
 import type {SceneState,StructureId} from './types';
 import {buildMacro,positionParts,worldAnchor,buildConnectors} from './macroModel';
 import {sectionPlane,isolationIds} from './exploration';
@@ -301,13 +302,13 @@ export default function EyeScene({state,onSelect,onDetailSelect,flow}:{state:Sce
       // Goldmann (F/C/U panel), plus denyut ±15% (~72/mnt). Konveksi termal
       // bergerak terus walau animasi dijeda.
       const fl=flowRef.current??{production:2.5,facility:.3,uveoscleral:.5};
-      const bal=aqueousBalance(fl.production,fl.facility,fl.uveoscleral,9);
+      const speeds=sceneFlowSpeeds({F:fl.production,C:fl.facility,U:fl.uveoscleral,Pv:9});
       pulseT+=dt;
       const pulse=1+.15*Math.sin(pulseT*Math.PI*2*1.2);
       const inAq=s.module==='aqueous'&&!s.detail;
       if(s.playing&&!document.hidden&&inAq){
         for(const p of particles){
-          const v=p.path.type==='shared'?.12*(fl.production/2.5):p.path.type==='trabecular'?.19*(bal.qconv/2.0):.19*(bal.quv/.5);
+          const v=p.path.type==='shared'?speeds.shared:p.path.type==='trabecular'?speeds.trabecular:speeds.uveoscleral;
           p.phase=(p.phase+dt*s.speed*v*pulse)%1;
         }
         for(const c of convParticles)c.phase=(c.phase+dt*s.speed*.05*pulse)%1;
