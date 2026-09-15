@@ -15,6 +15,13 @@
       "when": 1788870100000,
       "tag": "0002_bridge",
       "file": "0002_bridge.sql"
+    },
+    {
+      "idx": 2,
+      "version": "0003_faculty",
+      "when": 1788870200000,
+      "tag": "0003_faculty",
+      "file": "0003_faculty.sql"
     }
   ]
 }

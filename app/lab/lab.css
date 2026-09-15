@@ -23,6 +23,17 @@ html.ocula-light .lab-demo{border-color:#14735a;background:#e2f0e766}
 html.ocula-light .lab-list a{border-color:#c3cfd5;color:#16232e}
 html.ocula-light .lab-list span{color:#5b6b78}
 html.ocula-light .lab-note a{color:#14735a}
+.lab-h2{font-size:16px;margin:24px 0 4px;letter-spacing:-.2px}
+.lab-form{display:grid;gap:10px;margin-top:12px;max-width:520px}
+.lab-form label{display:grid;gap:6px;font-size:13px;color:#a5b6c4}
+.lab-form input,.lab-textarea{background:#101820;border:1px solid #2b3c48;border-radius:6px;color:#dbe5ea;font:inherit;font-size:14px;padding:10px 12px;width:100%}
+.lab-textarea{font-family:ui-monospace,monospace;max-width:640px}
+.lab-report{margin-top:12px;border:1px solid #2b3c48;border-radius:6px;padding:12px 14px;font-size:13px;background:#101820;overflow:auto}
+.lab-report pre{margin:0;white-space:pre-wrap}
+html.ocula-light .lab-h2{color:#16232e}
+html.ocula-light .lab-form label{color:#43565f}
+html.ocula-light .lab-form input,html.ocula-light .lab-textarea{background:#fff;border-color:#c3cfd5;color:#16232e}
+html.ocula-light .lab-report{border-color:#c3cfd5;background:#fff}
 .lab-button{display:inline-block;margin-top:14px;font-size:13px;font-weight:600;border:1px solid #425247;background:#25332d;color:#c8d9cb;border-radius:5px;padding:10px 14px;cursor:pointer}
 .lab-button:hover{background:#31463a}
 .bridge-panel{margin-top:20px;border:1px solid #2b3c48;border-radius:8px;padding:16px;display:grid;gap:12px}

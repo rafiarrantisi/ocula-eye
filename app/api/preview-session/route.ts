@@ -46,3 +46,8 @@ export async function POST(req: Request): Promise<Response> {
     return json(500, { error: 'internal', message: 'Internal error.' });
   }
 }
+
+// DELETE /api/preview-session — sign out (expire the session cookie).
+export async function DELETE(): Promise<Response> {
+  return json(200, { signedOut: true }, { 'Set-Cookie': 'imaging_session=; Path=/; HttpOnly; SameSite=Lax; Expires=Thu, 01 Jan 1970 00:00:00 GMT' });
+}
