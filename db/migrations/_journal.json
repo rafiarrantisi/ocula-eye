@@ -8,6 +8,13 @@
       "when": 1788870000000,
       "tag": "0001_imaging",
       "file": "0001_imaging.sql"
+    },
+    {
+      "idx": 1,
+      "version": "0002_bridge",
+      "when": 1788870100000,
+      "tag": "0002_bridge",
+      "file": "0002_bridge.sql"
     }
   ]
 }

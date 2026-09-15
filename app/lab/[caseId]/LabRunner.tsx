@@ -1,6 +1,9 @@
 'use client';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import BridgePanel from '../../../components/learning/BridgePanel.tsx';
+import MechanismReturnBar from '../../../components/learning/MechanismReturnBar.tsx';
 import ImagingCase, {
   type CaseFeedback,
   type CaseMeta,
@@ -62,13 +65,25 @@ async function api(path: string, init?: RequestInit, key?: string): Promise<{ st
   return { status: res.status, body };
 }
 
-export default function LabRunner({ releaseId, releaseVersion, caseEntry, demoMode }: RunnerProps) {
+export default function LabRunner(props: RunnerProps) {
+  return (
+    <Suspense>
+      <LabRunnerInner {...props} />
+    </Suspense>
+  );
+}
+
+function LabRunnerInner({ releaseId, releaseVersion, caseEntry, demoMode }: RunnerProps) {
   const [phase, setPhase] = useState<'boot' | 'ready' | 'failed'>('boot');
   const [fatal, setFatal] = useState('');
   const [attemptId, setAttemptId] = useState('');
   const [revision, setRevision] = useState(0);
   const [feedback, setFeedback] = useState<CaseFeedback | null>(null);
   const [busy, setBusy] = useState(false);
+  const [bridgeOpen, setBridgeOpen] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromAttempt = searchParams.get('from');
   const [idemKey] = useState(() =>
     typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `demo-${Date.now()}-${Math.random().toString(36).slice(2)}`,
   );
@@ -284,6 +299,12 @@ export default function LabRunner({ releaseId, releaseVersion, caseEntry, demoMo
         </p>
       )}
       <p className="lab-note"><Link href="/lab">← Daftar kasus</Link></p>
+      {fromAttempt && (
+        <MechanismReturnBar
+          originLabel={`upaya ${fromAttempt.slice(0, 8)}…`}
+          onReturn={() => router.back()}
+        />
+      )}
       <ImagingCase
         caseMeta={caseMeta}
         tasks={tasks}
@@ -292,6 +313,26 @@ export default function LabRunner({ releaseId, releaseVersion, caseEntry, demoMo
         onDraft={sendDraft}
         onSubmit={sendSubmit}
       />
+      {feedback && !bridgeOpen && (
+        <button type="button" className="lab-button" onClick={() => setBridgeOpen(true)}>
+          Pelajari mekanisme kesalahan ini
+        </button>
+      )}
+      {feedback && bridgeOpen && attemptId && (
+        <BridgePanel
+          attemptId={attemptId}
+          originLabel={caseEntry.title}
+          onFollowUp={(nextCaseId, originAttemptId) => {
+            try {
+              window.sessionStorage.setItem('ocula-bridge-origin', JSON.stringify({ attemptId: originAttemptId, caseId: caseEntry.caseId }));
+            } catch {
+              /* penyimpanan sesi tidak tersedia */
+            }
+            router.push(`/lab/${nextCaseId}?from=${originAttemptId}`);
+          }}
+          onClose={() => setBridgeOpen(false)}
+        />
+      )}
     </main>
   );
 }

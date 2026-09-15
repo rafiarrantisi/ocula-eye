@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { integer, jsonb, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { boolean, integer, jsonb, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 
 // PART03 medical-education imaging slice. Postgres-only tables (this repo's
 // default db/index.ts is Cloudflare D1; the imaging slice uses postgres-js +
@@ -38,6 +38,7 @@ export const imagingAttempts = pgTable('imaging_attempts', {
   revision: integer('revision').notNull().default(0),
   createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
   submittedAt: timestamp('submitted_at', { withTimezone: true, mode: 'date' }),
+  parentAttemptId: text('parent_attempt_id'),
 });
 
 export const imagingAttemptDrafts = pgTable('imaging_attempt_drafts', {
@@ -93,3 +94,29 @@ export const imagingAttemptsRelations = relations(imagingAttempts, ({ one }) => 
     references: [imagingScores.attemptId],
   }),
 }));
+
+// PART04 medical-education bridge slice. Additive only; every export above is
+// unchanged. Matches db/migrations/0002_bridge.sql.
+
+export const bridgeProgress = pgTable('bridge_progress', {
+  id: text('id').primaryKey(),
+  sessionId: text('session_id').notNull(),
+  attemptId: text('attempt_id').notNull(),
+  releaseId: text('release_id').notNull(),
+  questionId: text('question_id').notNull(),
+  followupCaseId: text('followup_case_id'),
+  completed: boolean('completed').notNull().default(false),
+  respondedCorrect: boolean('responded_correct'),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
+});
+
+export const learningEvents = pgTable('learning_events', {
+  id: text('id').primaryKey(),
+  sessionId: text('session_id').notNull(),
+  attemptId: text('attempt_id'),
+  releaseId: text('release_id'),
+  event: text('event').notNull(),
+  conceptId: text('concept_id'),
+  payload: jsonb('payload'),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
+});

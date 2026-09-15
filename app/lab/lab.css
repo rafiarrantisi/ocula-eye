@@ -23,3 +23,33 @@ html.ocula-light .lab-demo{border-color:#14735a;background:#e2f0e766}
 html.ocula-light .lab-list a{border-color:#c3cfd5;color:#16232e}
 html.ocula-light .lab-list span{color:#5b6b78}
 html.ocula-light .lab-note a{color:#14735a}
+.lab-button{display:inline-block;margin-top:14px;font-size:13px;font-weight:600;border:1px solid #425247;background:#25332d;color:#c8d9cb;border-radius:5px;padding:10px 14px;cursor:pointer}
+.lab-button:hover{background:#31463a}
+.bridge-panel{margin-top:20px;border:1px solid #2b3c48;border-radius:8px;padding:16px;display:grid;gap:12px}
+.bridge-panel p{font-size:14px;line-height:1.8;color:#b2c1cc;margin:0}
+.bridge-mechanisms{margin:0;padding-left:20px;display:grid;gap:8px;font-size:14px;line-height:1.8;color:#b2c1cc}
+.bridge-skip{background:none;border:0;color:#8fa5b3;font-size:12px;cursor:pointer;padding:4px 0;text-decoration:underline}
+.mech-returnbar{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid #2b3c48;border-radius:6px;padding:10px 14px;font-size:13px;color:#b2c1cc;margin-top:14px}
+.mech-returnbar button{background:none;border:0;color:#b9d5c0;font-size:13px;cursor:pointer;text-decoration:underline;white-space:nowrap}
+html.ocula-light .lab-button{border-color:#9cc3ab;background:#e2f0e7;color:#12372a}
+html.ocula-light .bridge-panel{border-color:#c3cfd5}
+html.ocula-light .bridge-panel p,html.ocula-light .bridge-mechanisms{color:#43565f}
+html.ocula-light .bridge-skip{color:#5b6b78}
+html.ocula-light .mech-returnbar{border-color:#c3cfd5;color:#43565f}
+html.ocula-light .mech-returnbar button{color:#14735a}
+.quiz-feedback{font-size:13px;border:1px solid #364a3f;padding:10px;background:#25342d;color:#bbcbbb;border-radius:4px;margin-top:10px}
+.small-note{font-size:12px;color:#8fa5b3;line-height:1.7}
+.mech-question{margin-top:14px}
+.mech-question>p:first-child{font-size:14px;color:#b2c1cc;line-height:1.8;margin:0 0 4px}
+.mech-question>button{display:flex;gap:9px;align-items:center;text-align:left;font-size:13px;line-height:1.6;padding:10px;margin-top:7px;border:1px solid #34444e;border-radius:4px;width:100%;color:#93a99a;background:none;cursor:pointer}
+.mech-question>button:disabled{opacity:.55;cursor:default}
+.mech-question>button>span{color:#bdcbd5}
+.mech-question>button.correct{background:#244c37;border-color:#639e7e}
+.mech-question>button.incorrect{background:#4b3330;border-color:#ac7870}
+html.ocula-light .quiz-feedback{border-color:#9cc3ab;background:#e2f0e7;color:#12372a}
+html.ocula-light .small-note{color:#5b6b78}
+html.ocula-light .mech-question>p:first-child{color:#33414d}
+html.ocula-light .mech-question>button{border-color:#c3cfd5;color:#2c5a41;background:#fff}
+html.ocula-light .mech-question>button>span{color:#43565f}
+html.ocula-light .mech-question>button.correct{background:#dcefe4;border-color:#4c8a68}
+html.ocula-light .mech-question>button.incorrect{background:#f7ddd8;border-color:#b26a5e}
