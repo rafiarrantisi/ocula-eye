@@ -1,0 +1,37 @@
+{
+  "synthetic": true,
+  "note": "SYNTHETIC teaching fixture. Hand-drawn unit-square geometry, not clinical data, not derived from any patient image.",
+  "description": "Mixed case: m2 duplicates m1 on t1; m3 is the wrong class inside t2; m4 correctly covers t2; t3 has no marks (false negative).",
+  "marks": [
+    { "id": "m1", "classId": "hemorrhage", "x": 0.2, "y": 0.2 },
+    { "id": "m2", "classId": "hemorrhage", "x": 0.22, "y": 0.18 },
+    { "id": "m3", "classId": "hard_exudate", "x": 0.7, "y": 0.7 },
+    { "id": "m4", "classId": "microaneurysm", "x": 0.71, "y": 0.69 }
+  ],
+  "targets": [
+    {
+      "id": "t1",
+      "classId": "hemorrhage",
+      "acceptedClasses": ["hemorrhage"],
+      "polygon": [[0.1, 0.1], [0.3, 0.1], [0.3, 0.3], [0.1, 0.3]],
+      "cx": 0.2,
+      "cy": 0.2
+    },
+    {
+      "id": "t2",
+      "classId": "microaneurysm",
+      "acceptedClasses": ["microaneurysm"],
+      "polygon": [[0.6, 0.6], [0.8, 0.6], [0.8, 0.8], [0.6, 0.8]],
+      "cx": 0.7,
+      "cy": 0.7
+    },
+    {
+      "id": "t3",
+      "classId": "cotton_wool_spot",
+      "acceptedClasses": ["cotton_wool_spot"],
+      "polygon": [[0.6, 0.1], [0.8, 0.1], [0.8, 0.3], [0.6, 0.3]],
+      "cx": 0.7,
+      "cy": 0.2
+    }
+  ]
+}

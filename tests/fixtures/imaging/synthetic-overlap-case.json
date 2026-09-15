@@ -1,0 +1,27 @@
+{
+  "synthetic": true,
+  "note": "SYNTHETIC teaching fixture. Hand-drawn unit-square geometry, not clinical data, not derived from any patient image.",
+  "description": "Overlap trap: m1 sits in both targets but closer to t2; m2 sits only in t2. Greedy m1->t2 strands m2 (cardinality 1); the optimum is m1->t1, m2->t2 (cardinality 2).",
+  "marks": [
+    { "id": "m1", "classId": "hemorrhage", "x": 0.38, "y": 0.2 },
+    { "id": "m2", "classId": "hemorrhage", "x": 0.6, "y": 0.2 }
+  ],
+  "targets": [
+    {
+      "id": "t1",
+      "classId": "hemorrhage",
+      "acceptedClasses": ["hemorrhage"],
+      "polygon": [[0.0, 0.0], [0.4, 0.0], [0.4, 0.4], [0.0, 0.4]],
+      "cx": 0.2,
+      "cy": 0.2
+    },
+    {
+      "id": "t2",
+      "classId": "hemorrhage",
+      "acceptedClasses": ["hemorrhage"],
+      "polygon": [[0.3, 0.0], [0.7, 0.0], [0.7, 0.4], [0.3, 0.4]],
+      "cx": 0.5,
+      "cy": 0.2
+    }
+  ]
+}

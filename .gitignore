@@ -45,3 +45,10 @@ next-env.d.ts
 /outputs/
 /work/
 *.tsbuildinfo
+# Local synthetic demo pack: source truth + private answers + file store.
+# Only public/lab-demo (manifest + hashed media, no answers) is committed.
+lab-demo/source/
+lab-demo/private/
+lab-demo/store.json
+lab-demo/.tmp-compile/
+lab-demo/.tmp-ingest-check/

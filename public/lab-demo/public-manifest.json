@@ -1,0 +1,490 @@
+{
+  "releaseId": "demo-synthetic-0.1.0",
+  "version": "0.1.0",
+  "schemaVersion": "imaging-1",
+  "cases": [
+    {
+      "caseId": "synthetic-loc-1",
+      "title": "Kasus sintetis 1 (lokalisasi)",
+      "modality": "fundus",
+      "tasks": [
+        {
+          "taskId": "synthetic-loc-1-loc",
+          "kind": "localization",
+          "prompt": "Tandai semua temuan pada kelas yang diizinkan di dalam wilayah tugas."
+        }
+      ],
+      "media": [
+        {
+          "asset": "0972fb2b3b0f38ac.png",
+          "bytes": 20078,
+          "sha256": "0972fb2b3b0f38ac46c8debbb56072b30aec5a2ab9d12fdc25896b5f35839b5c",
+          "width": 1000,
+          "height": 1000,
+          "attribution": "Synthetic demo image generated locally; not clinical data."
+        }
+      ],
+      "attribution": "Synthetic demo case for pipeline testing only."
+    },
+    {
+      "caseId": "synthetic-loc-2",
+      "title": "Kasus sintetis 2 (lokalisasi)",
+      "modality": "fundus",
+      "tasks": [
+        {
+          "taskId": "synthetic-loc-2-loc",
+          "kind": "localization",
+          "prompt": "Tandai semua temuan pada kelas yang diizinkan di dalam wilayah tugas."
+        }
+      ],
+      "media": [
+        {
+          "asset": "128061feaf623ed8.png",
+          "bytes": 19440,
+          "sha256": "128061feaf623ed810b2c50eba38d11f042c97abbc631aa2a9dd45b624a4ef76",
+          "width": 1000,
+          "height": 1000,
+          "attribution": "Synthetic demo image generated locally; not clinical data."
+        }
+      ],
+      "attribution": "Synthetic demo case for pipeline testing only."
+    },
+    {
+      "caseId": "synthetic-loc-3",
+      "title": "Kasus sintetis 3 (lokalisasi)",
+      "modality": "fundus",
+      "tasks": [
+        {
+          "taskId": "synthetic-loc-3-loc",
+          "kind": "localization",
+          "prompt": "Tandai semua temuan pada kelas yang diizinkan di dalam wilayah tugas."
+        }
+      ],
+      "media": [
+        {
+          "asset": "0fd17be736d4a5c3.png",
+          "bytes": 20080,
+          "sha256": "0fd17be736d4a5c3d273822be509247335659bcd873962c2011394c09ee251a2",
+          "width": 1000,
+          "height": 1000,
+          "attribution": "Synthetic demo image generated locally; not clinical data."
+        }
+      ],
+      "attribution": "Synthetic demo case for pipeline testing only."
+    },
+    {
+      "caseId": "synthetic-loc-4",
+      "title": "Kasus sintetis 4 (lokalisasi)",
+      "modality": "fundus",
+      "tasks": [
+        {
+          "taskId": "synthetic-loc-4-loc",
+          "kind": "localization",
+          "prompt": "Tandai semua temuan pada kelas yang diizinkan di dalam wilayah tugas."
+        }
+      ],
+      "media": [
+        {
+          "asset": "cdec3c7bb3a47bd1.png",
+          "bytes": 19690,
+          "sha256": "cdec3c7bb3a47bd1df467269ba7e6bdec178486392e24d8c9834048ef96ac857",
+          "width": 1000,
+          "height": 1000,
+          "attribution": "Synthetic demo image generated locally; not clinical data."
+        }
+      ],
+      "attribution": "Synthetic demo case for pipeline testing only."
+    },
+    {
+      "caseId": "synthetic-loc-5",
+      "title": "Kasus sintetis 5 (lokalisasi)",
+      "modality": "fundus",
+      "tasks": [
+        {
+          "taskId": "synthetic-loc-5-loc",
+          "kind": "localization",
+          "prompt": "Tandai semua temuan pada kelas yang diizinkan di dalam wilayah tugas."
+        }
+      ],
+      "media": [
+        {
+          "asset": "67e55a652a7337bb.png",
+          "bytes": 20042,
+          "sha256": "67e55a652a7337bbb0783b826d18eb207aab538c112153b269d31b389fa04771",
+          "width": 1000,
+          "height": 1000,
+          "attribution": "Synthetic demo image generated locally; not clinical data."
+        }
+      ],
+      "attribution": "Synthetic demo case for pipeline testing only."
+    },
+    {
+      "caseId": "synthetic-loc-6",
+      "title": "Kasus sintetis 6 (lokalisasi)",
+      "modality": "fundus",
+      "tasks": [
+        {
+          "taskId": "synthetic-loc-6-loc",
+          "kind": "localization",
+          "prompt": "Tandai semua temuan pada kelas yang diizinkan di dalam wilayah tugas."
+        }
+      ],
+      "media": [
+        {
+          "asset": "99aa6ba7c3f606cb.png",
+          "bytes": 19324,
+          "sha256": "99aa6ba7c3f606cb3ecdca233b7d2441e0c2cd78f52208485081fa155dc6f6c5",
+          "width": 1000,
+          "height": 1000,
+          "attribution": "Synthetic demo image generated locally; not clinical data."
+        }
+      ],
+      "attribution": "Synthetic demo case for pipeline testing only."
+    },
+    {
+      "caseId": "synthetic-grade-1",
+      "title": "Kasus sintetis 7 (gradasi)",
+      "modality": "fundus",
+      "tasks": [
+        {
+          "taskId": "synthetic-grade-1-grade",
+          "kind": "grade",
+          "prompt": "Pilih tingkat yang disepakati untuk citra sintetis ini.",
+          "options": [
+            {
+              "id": "grade-0",
+              "text": "grade-0"
+            },
+            {
+              "id": "grade-1",
+              "text": "grade-1"
+            },
+            {
+              "id": "grade-2",
+              "text": "grade-2"
+            },
+            {
+              "id": "grade-3",
+              "text": "grade-3"
+            },
+            {
+              "id": "grade-4",
+              "text": "grade-4"
+            }
+          ]
+        },
+        {
+          "taskId": "synthetic-grade-1-feat-a",
+          "kind": "feature",
+          "prompt": "Eksudat keras tampak",
+          "options": [
+            {
+              "id": "ya",
+              "text": "ya"
+            },
+            {
+              "id": "tidak",
+              "text": "tidak"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "asset": "5f7ac7d5b0c7d477.png",
+          "bytes": 19774,
+          "sha256": "5f7ac7d5b0c7d47734f31bcce9f0bd4ac132cec7d36cbab421cdff155b00f8c0",
+          "width": 1000,
+          "height": 1000,
+          "attribution": "Synthetic demo image generated locally; not clinical data."
+        }
+      ],
+      "attribution": "Synthetic demo case for pipeline testing only."
+    },
+    {
+      "caseId": "synthetic-grade-2",
+      "title": "Kasus sintetis 8 (gradasi)",
+      "modality": "fundus",
+      "tasks": [
+        {
+          "taskId": "synthetic-grade-2-grade",
+          "kind": "grade",
+          "prompt": "Pilih tingkat yang disepakati untuk citra sintetis ini.",
+          "options": [
+            {
+              "id": "grade-0",
+              "text": "grade-0"
+            },
+            {
+              "id": "grade-1",
+              "text": "grade-1"
+            },
+            {
+              "id": "grade-2",
+              "text": "grade-2"
+            },
+            {
+              "id": "grade-3",
+              "text": "grade-3"
+            },
+            {
+              "id": "grade-4",
+              "text": "grade-4"
+            }
+          ]
+        },
+        {
+          "taskId": "synthetic-grade-2-feat-b",
+          "kind": "feature",
+          "prompt": "Perdarahan tampak",
+          "options": [
+            {
+              "id": "ya",
+              "text": "ya"
+            },
+            {
+              "id": "tidak",
+              "text": "tidak"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "asset": "c580ea94a57cc3da.png",
+          "bytes": 19267,
+          "sha256": "c580ea94a57cc3daf2d3c53a6210eefbb3a0eb4f02f61190f224ada4ed40bb35",
+          "width": 1000,
+          "height": 1000,
+          "attribution": "Synthetic demo image generated locally; not clinical data."
+        }
+      ],
+      "attribution": "Synthetic demo case for pipeline testing only."
+    },
+    {
+      "caseId": "synthetic-grade-3",
+      "title": "Kasus sintetis 9 (gradasi)",
+      "modality": "fundus",
+      "tasks": [
+        {
+          "taskId": "synthetic-grade-3-grade",
+          "kind": "grade",
+          "prompt": "Pilih tingkat yang disepakati untuk citra sintetis ini.",
+          "options": [
+            {
+              "id": "grade-0",
+              "text": "grade-0"
+            },
+            {
+              "id": "grade-1",
+              "text": "grade-1"
+            },
+            {
+              "id": "grade-2",
+              "text": "grade-2"
+            },
+            {
+              "id": "grade-3",
+              "text": "grade-3"
+            },
+            {
+              "id": "grade-4",
+              "text": "grade-4"
+            }
+          ]
+        },
+        {
+          "taskId": "synthetic-grade-3-feat-c",
+          "kind": "feature",
+          "prompt": "Cotton-wool spot tampak",
+          "options": [
+            {
+              "id": "ya",
+              "text": "ya"
+            },
+            {
+              "id": "tidak",
+              "text": "tidak"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "asset": "6359e49bae8caaf4.png",
+          "bytes": 19918,
+          "sha256": "6359e49bae8caaf468e5557b8e6bf59fa391c254c7a521e974793a7788f58e7b",
+          "width": 1000,
+          "height": 1000,
+          "attribution": "Synthetic demo image generated locally; not clinical data."
+        }
+      ],
+      "attribution": "Synthetic demo case for pipeline testing only."
+    },
+    {
+      "caseId": "synthetic-grade-4",
+      "title": "Kasus sintetis 10 (gradasi)",
+      "modality": "fundus",
+      "tasks": [
+        {
+          "taskId": "synthetic-grade-4-grade",
+          "kind": "grade",
+          "prompt": "Pilih tingkat yang disepakati untuk citra sintetis ini.",
+          "options": [
+            {
+              "id": "grade-0",
+              "text": "grade-0"
+            },
+            {
+              "id": "grade-1",
+              "text": "grade-1"
+            },
+            {
+              "id": "grade-2",
+              "text": "grade-2"
+            },
+            {
+              "id": "grade-3",
+              "text": "grade-3"
+            },
+            {
+              "id": "grade-4",
+              "text": "grade-4"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "asset": "218c1f06a184d2f7.png",
+          "bytes": 19319,
+          "sha256": "218c1f06a184d2f7d1286a4b6255952e2862bfdf73e6525c827b765e13970404",
+          "width": 1000,
+          "height": 1000,
+          "attribution": "Synthetic demo image generated locally; not clinical data."
+        }
+      ],
+      "attribution": "Synthetic demo case for pipeline testing only."
+    },
+    {
+      "caseId": "synthetic-grade-5",
+      "title": "Kasus sintetis 11 (gradasi)",
+      "modality": "fundus",
+      "tasks": [
+        {
+          "taskId": "synthetic-grade-5-grade",
+          "kind": "grade",
+          "prompt": "Pilih tingkat yang disepakati untuk citra sintetis ini.",
+          "options": [
+            {
+              "id": "grade-0",
+              "text": "grade-0"
+            },
+            {
+              "id": "grade-1",
+              "text": "grade-1"
+            },
+            {
+              "id": "grade-2",
+              "text": "grade-2"
+            },
+            {
+              "id": "grade-3",
+              "text": "grade-3"
+            },
+            {
+              "id": "grade-4",
+              "text": "grade-4"
+            }
+          ]
+        },
+        {
+          "taskId": "synthetic-grade-5-feat-e",
+          "kind": "feature",
+          "prompt": "Neovaskularisasi tampak",
+          "options": [
+            {
+              "id": "ya",
+              "text": "ya"
+            },
+            {
+              "id": "tidak",
+              "text": "tidak"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "asset": "248eb5479ef1735f.png",
+          "bytes": 19903,
+          "sha256": "248eb5479ef1735f69d2fd43bfd21c83a44f1ab4fcf66a18c4255a89d04a3c80",
+          "width": 1000,
+          "height": 1000,
+          "attribution": "Synthetic demo image generated locally; not clinical data."
+        }
+      ],
+      "attribution": "Synthetic demo case for pipeline testing only."
+    },
+    {
+      "caseId": "synthetic-grade-6",
+      "title": "Kasus sintetis 12 (gradasi)",
+      "modality": "fundus",
+      "tasks": [
+        {
+          "taskId": "synthetic-grade-6-grade",
+          "kind": "grade",
+          "prompt": "Pilih tingkat yang disepakati untuk citra sintetis ini.",
+          "options": [
+            {
+              "id": "grade-0",
+              "text": "grade-0"
+            },
+            {
+              "id": "grade-1",
+              "text": "grade-1"
+            },
+            {
+              "id": "grade-2",
+              "text": "grade-2"
+            },
+            {
+              "id": "grade-3",
+              "text": "grade-3"
+            },
+            {
+              "id": "grade-4",
+              "text": "grade-4"
+            }
+          ]
+        },
+        {
+          "taskId": "synthetic-grade-6-feat-f",
+          "kind": "feature",
+          "prompt": "Mikroaneurisma tampak",
+          "options": [
+            {
+              "id": "ya",
+              "text": "ya"
+            },
+            {
+              "id": "tidak",
+              "text": "tidak"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "asset": "87d358b5e7f6a0e0.png",
+          "bytes": 19484,
+          "sha256": "87d358b5e7f6a0e0b43aebe46eb2b22db3a40ba0c57917ad41740ea686a2a7d5",
+          "width": 1000,
+          "height": 1000,
+          "attribution": "Synthetic demo image generated locally; not clinical data."
+        }
+      ],
+      "attribution": "Synthetic demo case for pipeline testing only."
+    }
+  ]
+}
