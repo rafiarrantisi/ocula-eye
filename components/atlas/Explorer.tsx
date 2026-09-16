@@ -105,7 +105,7 @@ export default function Explorer(){
     <a className="skip-link" href="#explorer">Langsung ke explorer</a>
     <header className="app-header">
       <a href="#explorer" className="brand" aria-label="Ocula atlas mata"><span className="brand-symbol"><Eye size={26} strokeWidth={1.35}/></span><span>ocula<span className="brand-period">.</span></span><span className="brand-divider"/><span className="brand-caption">OPHTHALMOLOGY ATLAS</span></a>
-      <nav className="top-nav" aria-label="Navigasi utama"><button className="active" onClick={()=>{setModal(null);setFocus(false);}}>Explorer</button><button onClick={()=>setModal('guide')}>Panduan belajar</button><button onClick={()=>setModal('sources')}>Sumber & model <ArrowUpRight size={14}/></button></nav>
+      <nav className="top-nav" aria-label="Navigasi utama"><button className="active" onClick={()=>{setModal(null);setFocus(false);}}>Explorer</button><button onClick={()=>setModal('guide')}>Panduan belajar</button><button onClick={()=>setModal('sources')}>Sumber & model <ArrowUpRight size={14}/></button><a className="top-nav-link" href="/lab">Lab latihan</a><a className="top-nav-link" href="/faculty">Fakultas</a></nav>
       <div className="header-end"><button className="theme-toggle" onClick={()=>setTheme(t=>t==='dark'?'light':'dark')} title={theme==='dark'?'Ganti ke tema terang':'Ganti ke tema gelap'} aria-label={theme==='dark'?'Ganti ke tema terang':'Ganti ke tema gelap'}>{theme==='dark'?<Sun size={16}/>:<Moon size={16}/>}</button><span className="language">ID <span>/ EN istilah</span></span><span className="edition">EDISI 01</span></div>
     </header>
     <div className="workspace">
