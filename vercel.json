@@ -1,4 +1,6 @@
 {
   "buildCommand": "npm run build:static",
-  "outputDirectory": "dist/static"
+  "outputDirectory": "dist/static",
+  "cleanUrls": true,
+  "trailingSlash": false
 }
