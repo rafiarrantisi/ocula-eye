@@ -1,6 +1,5 @@
 'use client';
 import { useCallback, useEffect, useState, Suspense } from 'react';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BridgePanel from '../../../components/learning/BridgePanel.tsx';
 import MechanismReturnBar from '../../../components/learning/MechanismReturnBar.tsx';
@@ -287,7 +286,7 @@ function LabRunnerInner({ releaseId, releaseVersion, caseEntry, demoMode }: Runn
     return (
       <main className="lab-page">
         <p role="alert">{fatal}</p>
-        <p className="lab-note"><Link href="/lab">← Daftar kasus</Link></p>
+        <p className="lab-note"><a href="/lab">← Daftar kasus</a></p>
       </main>
     );
   }
@@ -298,7 +297,7 @@ function LabRunnerInner({ releaseId, releaseVersion, caseEntry, demoMode }: Runn
           Mode demo lokal: data sintetis, tersimpan di file lokal. Bukan data klinis.
         </p>
       )}
-      <p className="lab-note"><Link href="/lab">← Daftar kasus</Link></p>
+      <p className="lab-note"><a href="/lab">← Daftar kasus</a></p>
       {fromAttempt && (
         <MechanismReturnBar
           originLabel={`upaya ${fromAttempt.slice(0, 8)}…`}

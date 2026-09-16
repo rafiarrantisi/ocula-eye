@@ -1,6 +1,5 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
-import Link from 'next/link';
 
 interface Overview {
   institutionId: string;
@@ -76,6 +75,7 @@ export default function FacultyHome({ demoMode }: { demoMode: boolean }) {
 
   return (
     <main className="lab-page">
+      <div className="lab-topbar"><span>ocula<span className="brand-period">.</span></span><nav><a href="/">Atlas</a><a href="/lab">Lab latihan</a></nav></div>
       <p className="lab-eyebrow">OCULA · FAKULTAS</p>
       <h1>Kohort & penugasan</h1>
       {demoMode && (
@@ -110,10 +110,10 @@ export default function FacultyHome({ demoMode }: { demoMode: boolean }) {
           <ol className="lab-list">
             {data.cohorts.map((c) => (
               <li key={c.id}>
-                <Link href={`/faculty/cohorts/${c.id}`}>
+                <a href={`/faculty/cohorts/${c.id}`}>
                   <strong>{c.name}</strong>
                   <span>{c.id.slice(0, 8)}…</span>
-                </Link>
+                </a>
               </li>
             ))}
           </ol>
@@ -130,7 +130,7 @@ export default function FacultyHome({ demoMode }: { demoMode: boolean }) {
           </ol>
         </>
       )}
-      <p className="lab-note"><Link href="/lab">← Lab latihan</Link></p>
+      <p className="lab-note"><a href="/lab">← Lab latihan</a></p>
     </main>
   );
 }

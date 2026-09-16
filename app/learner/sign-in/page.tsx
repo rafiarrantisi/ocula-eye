@@ -1,10 +1,10 @@
-import Link from 'next/link';
 import '../../lab/lab.css';
 
 export default function LearnerSignInPage() {
   const demo = process.env.LAB_DEMO_STORE === '1';
   return (
     <main className="lab-page">
+      <div className="lab-topbar"><span>ocula<span className="brand-period">.</span></span><nav><a href="/">Atlas</a><a href="/lab">Lab latihan</a></nav></div>
       <p className="lab-eyebrow">OCULA · MASUK PESERTA</p>
       <h1>Masuk</h1>
       {demo ? (
@@ -18,7 +18,7 @@ export default function LearnerSignInPage() {
         </p>
       )}
       <p className="lab-note">
-        <Link href="/learner">Lanjut ke penugasanku</Link> · <Link href="/lab">Latihan bebas</Link>
+        <a href="/learner">Lanjut ke penugasanku</a> · <a href="/lab">Latihan bebas</a>
       </p>
     </main>
   );

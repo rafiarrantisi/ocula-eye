@@ -1,6 +1,5 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
-import Link from 'next/link';
 
 interface Preview {
   token: string;
@@ -123,7 +122,8 @@ export default function CohortDetail({ cohortId }: { cohortId: string }) {
 
   return (
     <main className="lab-page">
-      <p className="lab-note"><Link href="/faculty">← Fakultas</Link></p>
+      <div className="lab-topbar"><span>ocula<span className="brand-period">.</span></span><nav><a href="/">Atlas</a><a href="/faculty">Fakultas</a><a href="/lab">Lab latihan</a></nav></div>
+      <p className="lab-note"><a href="/faculty">← Fakultas</a></p>
       <p className="lab-eyebrow">KOHORT</p>
       <h1>{cohortId}</h1>
       {error && <p role="alert">{error}</p>}

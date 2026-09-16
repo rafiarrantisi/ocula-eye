@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import './lab.css';
@@ -24,6 +23,7 @@ export default async function LabHome() {
   const demo = process.env.LAB_DEMO_STORE === '1';
   return (
     <main className="lab-page">
+      <div className="lab-topbar"><span>ocula<span className="brand-period">.</span></span><nav><a href="/">Atlas</a><a href="/faculty">Fakultas</a></nav></div>
       <p className="lab-eyebrow">OCULA · LAB LATIHAN</p>
       <h1>Latihan interpretasi fundus</h1>
       <p className="lab-note">
@@ -49,16 +49,16 @@ export default async function LabHome() {
           <ol className="lab-list">
             {manifest.cases.map((c, i) => (
               <li key={c.caseId}>
-                <Link href={`/lab/${c.caseId}`}>
+                <a href={`/lab/${c.caseId}`}>
                   <strong>{i + 1}. {c.title}</strong>
                   <span>{c.tasks.map((t) => t.kind).join(' + ')}</span>
-                </Link>
+                </a>
               </li>
             ))}
           </ol>
         </>
       )}
-      <p className="lab-note"><Link href="/">← Kembali ke atlas</Link></p>
+      <p className="lab-note"><a href="/">← Kembali ke atlas</a></p>
     </main>
   );
 }

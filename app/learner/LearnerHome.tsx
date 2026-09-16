@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 
 interface LearnerAssignment {
   id: string;
@@ -56,6 +55,7 @@ export default function LearnerHome({ demoMode }: { demoMode: boolean }) {
 
   return (
     <main className="lab-page">
+      <div className="lab-topbar"><span>ocula<span className="brand-period">.</span></span><nav><a href="/">Atlas</a><a href="/lab">Lab latihan</a></nav></div>
       <p className="lab-eyebrow">OCULA · PESERTA</p>
       <h1>Penugasanku</h1>
       {demoMode && (
@@ -82,10 +82,10 @@ export default function LearnerHome({ demoMode }: { demoMode: boolean }) {
           <ol className="lab-list">
             {(data.assignments ?? []).map((a) => (
               <li key={a.id}>
-                <Link href="/lab">
+                <a href="/lab">
                   <strong>{a.releaseId}</strong>
                   <span>{a.mode} · {a.revealPolicy}</span>
-                </Link>
+                </a>
               </li>
             ))}
           </ol>
@@ -94,7 +94,7 @@ export default function LearnerHome({ demoMode }: { demoMode: boolean }) {
       )}
       <p className="lab-note">
         <button type="button" className="lab-button" onClick={signOut}>Keluar</button>{' '}
-        <Link href="/lab">Latihan bebas</Link>
+        <a href="/lab">Latihan bebas</a>
       </p>
     </main>
   );
