@@ -42,6 +42,19 @@ async function loadCase(caseId: string): Promise<{ releaseId: string; version: s
   }
 }
 
+export async function generateStaticParams(): Promise<{ caseId: string }[]> {
+  try {
+    const raw = await readFile(path.join(process.cwd(), 'public', 'lab-demo', 'public-manifest.json'), 'utf8');
+    const manifest = JSON.parse(raw) as { cases?: { caseId?: unknown }[] };
+    if (!Array.isArray(manifest.cases)) return [];
+    return manifest.cases
+      .filter((c) => typeof c?.caseId === 'string')
+      .map((c) => ({ caseId: c.caseId as string }));
+  } catch {
+    return [];
+  }
+}
+
 export default async function LabCasePage({ params }: { params: Promise<{ caseId: string }> }) {
   const { caseId } = await params;
   const loaded = await loadCase(caseId);
